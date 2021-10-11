@@ -7,19 +7,22 @@
  * false : 로그인안한 사용자만 접근가능
  */
 
-import React, { useEffect } from "react";
+import React from "react";
 
-const authHOC = (Component, option) => {
+const authHOC = (Component, option, user) => {
   return function ({ history: { push } }) {
-    useEffect(() => {
-      console.log("HOC호출, 로그인 유무 검사 후 페이지 이동");
-      console.log("option >> ", option);
-    }, []);
+    // 누구나 접근가능
+    if (option === null) return <Component />;
 
-    // 로그인판단할 값 + option값을 이용해서 페이지이동을 결정
-    // 이동은 push("/"); 형태로 사용
+    // 로그인한유저가 로그인해야하는 페이지 접근
+    if (option === true && user) return <Component />;
 
-    return <Component></Component>;
+    // 로그인 안한유저가 로그인 안해야하는 페이지 접근
+    if (option === false && !user) return <Component />;
+
+    // 그 이외의 불법적인 접근들일 경우 메인페이지로 강제이동
+    push("/");
+    return <Component />;
   };
 };
 

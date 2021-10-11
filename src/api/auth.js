@@ -38,3 +38,12 @@ export async function apiLogin(body) {
 export function apiLogout() {
   return authInstance.delete("/logout");
 }
+
+export async function apiLoadToMe() {
+  try {
+    const { data } = await authInstance.get("/me");
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}

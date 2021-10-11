@@ -1,1 +1,1 @@
-export { apiRegister, apiLogin, apiLogout } from "./auth";
+export { apiRegister, apiLogin, apiLogout, apiLoadToMe } from "./auth";
