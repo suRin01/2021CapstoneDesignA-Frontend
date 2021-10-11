@@ -26,8 +26,13 @@ export async function apiRegister(body) {
   }
 }
 
-export function apiLogin(body) {
-  return authInstance.post("/login", body);
+export async function apiLogin(body) {
+  try {
+    const { data } = await authInstance.post("/login", body);
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export function apiLogout() {
