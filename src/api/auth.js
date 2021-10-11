@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const authInstance = axios.create({
-  baseURL: `${process.env.REACT_APP_SERVER}/auth`,
+  baseURL: `${process.env.REACT_APP_SERVER}/api/auth`,
   withCredentials: true,
   timeout: 1000,
 });
@@ -17,8 +17,13 @@ const myRequestInterceptor = authInstance.interceptors.request.use(
   },
 );
 
-export function apiRegister(body) {
-  return authInstance.post("/register", body);
+export async function apiRegister(body) {
+  try {
+    const { data } = await authInstance.post("/register", body);
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export function apiLogin(body) {
