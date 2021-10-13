@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const Container = styled.button`
   align-self: center;
@@ -21,6 +22,12 @@ const Button = ({ children, style, type }) => {
       <b>{children}</b>
     </Container>
   );
+};
+
+Button.propTypes = {
+  children: PropTypes.string.isRequired,
+  style: PropTypes.object,
+  type: PropTypes.string.isRequired,
 };
 
 export default Button;

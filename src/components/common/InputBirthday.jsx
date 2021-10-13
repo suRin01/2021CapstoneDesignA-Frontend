@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const BirthdayBoxStyle = styled.div`
   display: inline-block;
@@ -66,6 +67,15 @@ const InputBirthday = ({ year, month, day, onChangeYear, onChangeMonth, onChange
       <input type="text" value={day} placeholder="DD" maxLength="2" onChange={onChangeDay} />
     </BirthdayBoxStyle>
   );
+};
+
+InputBirthday.propTypes = {
+  year: PropTypes.string.isRequired,
+  month: PropTypes.string.isRequired,
+  day: PropTypes.string.isRequired,
+  onChangeYear: PropTypes.func.isRequired,
+  onChangeMonth: PropTypes.func.isRequired,
+  onChangeDay: PropTypes.func.isRequired,
 };
 
 export default InputBirthday;

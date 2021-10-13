@@ -4,7 +4,7 @@ const useInput = initValue => {
   const [input, setInput] = useState(initValue);
 
   const onChangeInput = useCallback(e => {
-    setInput(e.target.value);
+    setInput(e.target.value.trim());
   }, []);
 
   return [input, onChangeInput, setInput];

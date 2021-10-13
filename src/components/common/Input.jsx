@@ -30,8 +30,8 @@ const Container = styled.input`
   }
 `;
 
-const Input = props => {
-  return <Container {...props} />;
-};
+const Input = React.forwardRef((props, ref) => {
+  return <Container {...props} ref={ref} />;
+});
 
 export default Input;

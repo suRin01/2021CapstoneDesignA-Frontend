@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { withRouter } from "react-router";
 import styled from "styled-components";
 
@@ -57,6 +57,29 @@ const RegisterPage = ({ history }) => {
   const [isValidateMonth, setIsValidateMonth] = useState(false);
   const [isValidateDay, setIsValidateDay] = useState(false);
   const [isValidateBirthday, setIsValidateBirthday] = useState(false);
+
+  // 포커스를 위한 변수
+  const nameRef = useRef(null);
+  const idRef = useRef(null);
+  const passwordRef = useRef(null);
+  const passwordCheckRef = useRef(null);
+  const emailRef = useRef(null);
+  const phoneRef = useRef(null);
+  // 페이지 입장시 최초 포커스
+  useEffect(() => {
+    nameRef.current?.focus();
+  }, [nameRef.current]);
+
+  // 유효성검사와 포커스
+  const validateAndFocus = useCallback((validate, ref, message) => {
+    if (validate) return true;
+
+    ref?.current?.select();
+    ref?.current?.scrollIntoView();
+
+    alert(message);
+    return false;
+  }, []);
 
   // 아이디 변경 및 유효성 검사
   const onChangeId = useCallback(e => {
@@ -127,8 +150,15 @@ const RegisterPage = ({ history }) => {
     async e => {
       e.preventDefault();
 
-      if (!(isValidateId && isValidatePassword && isValidatePasswordCheck && isValidateEmail && isValidatePhone && isValidateBirthday))
-        return alert("정보를 제대로 입력해주세요");
+      if (!validateAndFocus(name, nameRef, "이름을 입력해주세요")) return;
+      if (!validateAndFocus(isValidateId, idRef, "아이디를 제대로 입력해주세요")) return;
+      if (!validateAndFocus(isValidatePassword, passwordRef, "비밀번호를 제대로 입력해주세요"))
+        return;
+      if (!validateAndFocus(isValidatePasswordCheck, passwordCheckRef, "비밀번호를 일치시켜주세요"))
+        return;
+      if (!validateAndFocus(isValidateEmail, emailRef, "이메일을 제대로 입력해주세요")) return;
+      if (!validateAndFocus(isValidatePhone, phoneRef, "휴대폰번호를 제대로 입력해주세요")) return;
+      if (!validateAndFocus(isValidateBirthday, null, "생일을 제대로 입력해주세요")) return;
 
       console.log("id >> ", id);
       console.log("password >> ", password);
@@ -142,7 +172,7 @@ const RegisterPage = ({ history }) => {
 
       // try {
       //   const data = await apiRegister();
-      //   alert(`${data.name}님 회원가입에 성공하셨습니다.`);
+      //   alert(`${data.name}님 회원가입에 성공하셨습니다. 로그인 페이지로 이동됩니다.`);
       //   history.push("/login");
       // } catch (error) {
       //   alert(error.response.data);
@@ -172,26 +202,68 @@ const RegisterPage = ({ history }) => {
       <Title>회원가입 - JSBird</Title>
       <Form onSubmit={onRegister}>
         <Label>이름</Label>
-        <Input type="text" value={name} onChange={onChangeName} placeholder="이름을 입력해주세요" style={marginBottom} />
+        <Input
+          type="text"
+          value={name}
+          onChange={onChangeName}
+          placeholder="이름을 입력해주세요"
+          style={marginBottom}
+          ref={nameRef}
+        />
 
         <Label>아이디</Label>
-        <Input type="text" value={id} onChange={onChangeId} placeholder="아이디를 입력해주세요" />
-        <Text isValidate={isValidateId}>숫자와 영어가 최소 한 글자 이상 포함되고, 최소 6자리여야 합니다.</Text>
+        <Input
+          type="text"
+          value={id}
+          onChange={onChangeId}
+          placeholder="아이디를 입력해주세요"
+          ref={idRef}
+        />
+        <Text isValidate={isValidateId}>
+          숫자와 영어가 최소 한 글자 이상 포함되고, 최소 6자리여야 합니다.
+        </Text>
 
         <Label>비밀번호</Label>
-        <Input type="password" value={password} onChange={onChangePassword} placeholder="비밀번호를 입력해주세요" />
-        <Text isValidate={isValidatePassword}>숫자와 영어가 최소 한 글자 이상 포함되고, 최소 8자리여야 합니다.</Text>
+        <Input
+          type="password"
+          value={password}
+          onChange={onChangePassword}
+          placeholder="비밀번호를 입력해주세요"
+          ref={passwordRef}
+        />
+        <Text isValidate={isValidatePassword}>
+          숫자와 영어가 최소 한 글자 이상 포함되고, 최소 8자리여야 합니다.
+        </Text>
 
         <Label>비밀번호 확인</Label>
-        <Input type="password" value={passwordCheck} onChange={onChangePasswordCheck} placeholder="비밀번호를 입력해주세요" />
+        <Input
+          type="password"
+          value={passwordCheck}
+          onChange={onChangePasswordCheck}
+          placeholder="비밀번호를 입력해주세요"
+          ref={passwordCheckRef}
+        />
         <Text isValidate={isValidatePasswordCheck}>비밀번호를 확인해주세요</Text>
 
         <Label>이메일</Label>
-        <Input type="text" value={email} onChange={onChangeEmail} placeholder="예) JSBird@naver.com" />
+        <Input
+          type="text"
+          value={email}
+          onChange={onChangeEmail}
+          placeholder="예) JSBird@naver.com"
+          ref={emailRef}
+        />
         <Text isValidate={isValidateEmail}>이메일 형식에 맞게 입력해주세요</Text>
 
         <Label>폰번호</Label>
-        <Input type="text" value={phone} onChange={onChangePhone} maxLength={11} placeholder="숫자만 입력해주세요" />
+        <Input
+          type="text"
+          value={phone}
+          onChange={onChangePhone}
+          maxLength={11}
+          placeholder="숫자만 입력해주세요"
+          ref={phoneRef}
+        />
         <Text isValidate={isValidatePhone}>숫자만 11자리 입력해주세요</Text>
 
         <Label>생일</Label>

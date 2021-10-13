@@ -8,7 +8,9 @@ const AvatarStyle = styled.img`
 `;
 
 const Avatar = ({ src, alt, width, height, marginRight }) => {
-  return <AvatarStyle src={src} alt={alt} width={width} height={height} marginRight={marginRight} />;
+  return (
+    <AvatarStyle src={src} alt={alt} width={width} height={height} marginRight={marginRight} />
+  );
 };
 
 Avatar.propTypes = {

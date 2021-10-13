@@ -138,7 +138,10 @@ const HomePage = () => {
   useEffect(() => {
     // 스크롤이벤트에 등록할 함수
     function scrollToLoad() {
-      if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 500) {
+      if (
+        window.scrollY + document.documentElement.clientHeight >
+        document.documentElement.scrollHeight - 500
+      ) {
         const lastId = posts[posts.length - 1]._id;
 
         // 임시.. 실제로 처리할 땐 몇가지 더 추가해야함

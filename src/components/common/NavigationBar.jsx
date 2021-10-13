@@ -62,6 +62,7 @@ const NavLeftSection = styled.section`
 const NavCenterSection = styled.section`
   display: inline-flex;
   justify-content: center;
+  align-items: center;
 
   & > li {
     display: inline-block;
@@ -79,7 +80,12 @@ const NavCenterSection = styled.section`
 const NavRightSection = styled.section`
   display: flex;
   align-items: center;
+
+  & > li {
+    display: inline-block;
+  }
   & > li > a {
+    display: inline-block;
     padding: 1.5rem 2.5rem;
     border-radius: 5px;
     text-align: center;
@@ -156,12 +162,12 @@ const NavigationBar = ({ history }) => {
         <NavCenterSection>
           <li>
             <NavLink to="/" activeStyle={activeLinkStyle} exact>
-              HOME
+              Home
             </NavLink>
           </li>
           <li>
             <NavLink to="/friend" activeStyle={activeLinkStyle}>
-              FRIEND
+              Friend
             </NavLink>
           </li>
         </NavCenterSection>
@@ -171,8 +177,8 @@ const NavigationBar = ({ history }) => {
           {user ? (
             <>
               <li>
-                <NavLink to={`/information/${user._id}`} activeStyle={activeLinkStyle}>
-                  내 정보
+                <NavLink to={`/profile/${user._id}`} activeStyle={activeLinkStyle}>
+                  Profile
                 </NavLink>
               </li>
               <li className="user__menu" onClick={onChangeShowMenu}>
@@ -198,12 +204,12 @@ const NavigationBar = ({ history }) => {
             <>
               <li>
                 <NavLink to="/login" activeStyle={activeLinkStyle}>
-                  LOGIN
+                  Login
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/register" activeStyle={activeLinkStyle}>
-                  REGISTER
+                  Register
                 </NavLink>
               </li>
             </>

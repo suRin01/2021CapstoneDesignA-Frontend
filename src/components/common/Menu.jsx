@@ -55,9 +55,8 @@ const Menu = ({ children, onCloseMenu }) => {
 };
 
 Menu.propTypes = {
-  children: PropTypes.node,
-  src: PropTypes.string.isRequired,
-  name: PropTypes.string,
+  children: PropTypes.node.isRequired,
+  onCloseMenu: PropTypes.func.isRequired,
 };
 
 export default Menu;

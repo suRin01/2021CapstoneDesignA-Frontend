@@ -8,9 +8,12 @@
  */
 
 import React from "react";
+import useUser from "../hooks/useUser";
 
-const authHOC = (Component, option, user) => {
+const authHOC = (Component, option) => {
   return function ({ history: { push } }) {
+    const [user] = useUser();
+
     // 누구나 접근가능
     if (option === null) return <Component />;
 
