@@ -35,8 +35,13 @@ export async function apiLogin(body) {
   }
 }
 
-export function apiLogout() {
-  return authInstance.delete("/logout");
+export async function apiLogout() {
+  try {
+    const { data } = await authInstance.delete("/logout");
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function apiLoadToMe() {

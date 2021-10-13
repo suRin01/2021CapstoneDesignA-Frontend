@@ -7,7 +7,7 @@ const useButton = initValue => {
     setButton(prev => !prev);
   }, []);
 
-  return [button, onChangeButton];
+  return [button, onChangeButton, setButton];
 };
 
 export default useButton;

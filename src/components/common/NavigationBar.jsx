@@ -1,8 +1,14 @@
-import React, { useMemo } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useCallback, useMemo, useState } from "react";
+import { Link, NavLink, withRouter } from "react-router-dom";
 import styled from "styled-components";
 
 import useButton from "../../hooks/useButton";
+import useUser from "../../hooks/useUser";
+
+import Avartar from "./Avatar";
+import Menu from "./Menu";
+
+// import { apiLogout } from "../../api";
 
 const NavStyle = styled.nav`
   position: sticky;
@@ -72,13 +78,27 @@ const NavCenterSection = styled.section`
 `;
 const NavRightSection = styled.section`
   display: flex;
-
+  align-items: center;
   & > li > a {
     padding: 1.5rem 2.5rem;
     border-radius: 5px;
     text-align: center;
   }
   & > li > a:hover {
+    background-color: #e0e0e0;
+  }
+
+  & > .user__menu {
+    display: flex;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    cursor: pointer;
+
+    & > b {
+      line-height: 30px;
+    }
+  }
+  & > .user__menu:hover {
     background-color: #e0e0e0;
   }
 `;
@@ -97,9 +117,30 @@ const HamburgerButton = styled.button`
   }
 `;
 
-const NavigationBar = () => {
+const NavigationBar = ({ history }) => {
+  const [user, setUser] = useUser();
   const [isShowLink, onChangeShowLink] = useButton(true);
+  const [isShowMenu, onChangeShowMenu, setIsShowMenu] = useButton(false);
   const activeLinkStyle = useMemo(() => ({ color: "#1977f1" }), []);
+
+  const onClickLogout = useCallback(() => {
+    // 임시로... 강제 리렌더링을 하기 위해서
+    // 지금 임시로 localStorage를 사용하고 있어서 React에서 변경감지를 못함
+    localStorage.removeItem("user");
+    setUser(JSON.parse(localStorage.getItem("user")));
+
+    // + api로그아웃 요청
+    // try {
+    //   const data = await apiLogout();
+    //   history.push("/");
+    // } catch (error) {
+    //   alert(error.response.data);
+    // }
+  }, []);
+
+  const onCloseMenu = useCallback(() => {
+    setIsShowMenu(false);
+  }, []);
 
   return (
     <NavStyle>
@@ -127,16 +168,46 @@ const NavigationBar = () => {
 
         {/* 우측영역 ( 설정 ) */}
         <NavRightSection>
-          <li>
-            <NavLink to="/login" activeStyle={activeLinkStyle}>
-              LOGIN
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/register" activeStyle={activeLinkStyle}>
-              REGISTER
-            </NavLink>
-          </li>
+          {user ? (
+            <>
+              <li>
+                <NavLink to={`/information/${user._id}`} activeStyle={activeLinkStyle}>
+                  내 정보
+                </NavLink>
+              </li>
+              <li className="user__menu" onClick={onChangeShowMenu}>
+                <Avartar src={user.Image.path} width={35} height={35} />
+                <b>{user.name}</b>
+              </li>
+              {isShowMenu && (
+                <Menu onCloseMenu={onCloseMenu}>
+                  <li>
+                    <Avartar src={user.Image.path} width={50} height={50} />
+                    <span>
+                      <b>{user.name}</b>
+                      <span>내 프로필 보기</span>
+                    </span>
+                  </li>
+                  <li onClick={onClickLogout}>
+                    <b>로그아웃</b>
+                  </li>
+                </Menu>
+              )}
+            </>
+          ) : (
+            <>
+              <li>
+                <NavLink to="/login" activeStyle={activeLinkStyle}>
+                  LOGIN
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/register" activeStyle={activeLinkStyle}>
+                  REGISTER
+                </NavLink>
+              </li>
+            </>
+          )}
         </NavRightSection>
 
         <HamburgerSection>
@@ -151,4 +222,4 @@ const NavigationBar = () => {
   );
 };
 
-export default NavigationBar;
+export default withRouter(NavigationBar);
