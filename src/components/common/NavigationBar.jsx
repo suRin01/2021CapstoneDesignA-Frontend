@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Link, NavLink, withRouter } from "react-router-dom";
 import styled from "styled-components";
 
@@ -128,6 +128,8 @@ const NavigationBar = ({ history }) => {
   const [isShowLink, onChangeShowLink] = useButton(true);
   const [isShowMenu, onChangeShowMenu, setIsShowMenu] = useButton(false);
   const activeLinkStyle = useMemo(() => ({ color: "#1977f1" }), []);
+  const navAvarterStyle = useMemo(() => ({ width: "35px", height: "35px" }), []);
+  const menuAvarterStyle = useMemo(() => ({ width: "50px", height: "50px" }), []);
 
   const onClickLogout = useCallback(() => {
     // 임시로... 강제 리렌더링을 하기 위해서
@@ -182,13 +184,13 @@ const NavigationBar = ({ history }) => {
                 </NavLink>
               </li>
               <li className="user__menu" onClick={onChangeShowMenu}>
-                <Avartar src={user.Image.path} width={35} height={35} />
+                <Avartar src={user.Image.path} style={navAvarterStyle} />
                 <b>{user.name}</b>
               </li>
               {isShowMenu && (
                 <Menu onCloseMenu={onCloseMenu}>
                   <li>
-                    <Avartar src={user.Image.path} width={50} height={50} />
+                    <Avartar src={user.Image.path} style={menuAvarterStyle} />
                     <span>
                       <b>{user.name}</b>
                       <span>내 프로필 보기</span>

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const ButtonsStyle = styled.li`
   display: flex;
@@ -18,14 +19,20 @@ const ButtonsStyle = styled.li`
   }
 `;
 
-const PostCardButtons = () => {
+const PostCardButtons = ({ onClickIsShowButton }) => {
   return (
     <ButtonsStyle>
       <button type="button">좋아요</button>
-      <button type="button">댓글달기</button>
+      <button type="button" onClick={onClickIsShowButton}>
+        댓글달기
+      </button>
       <button type="button">공유하기</button>
     </ButtonsStyle>
   );
+};
+
+PostCardButtons.propTypes = {
+  onClickIsShowButton: PropTypes.func.isRequired,
 };
 
 export default PostCardButtons;
