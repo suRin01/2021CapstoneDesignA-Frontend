@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import useUser from "../../../hooks/useUser";
 import useInput from "../../../hooks/useInput";
 
-// import { apiFetchComments, apiAppendComment } from "../../../api";
+// import { apiFetchComments, apiAppendComment, apiRemoveComment } from "../../../api";
 
 import CommentForm from "./CommentForm";
 import CommentSingle from "./CommentSingle";
@@ -82,6 +82,21 @@ const Comment = ({ PostId }) => {
     [user, PostId, contents],
   );
 
+  // 댓글 삭제
+  const onRemoveComment = useCallback(async CommentId => {
+    // api요청
+    // apiRemoveComment(CommentId)
+
+    // 해당 댓글과 대댓글 직접 삭제하기
+    setComments(prev =>
+      prev.filter(comment => {
+        if (comment._id === CommentId) return false;
+        if (comment.CommentId === CommentId) return false;
+        return true;
+      }),
+    );
+  }, []);
+
   return (
     <section className="comments__container">
       <CommentForm onSubmitComment={onSubmitComment} onChangeContents={onChangeContents} />
@@ -93,6 +108,7 @@ const Comment = ({ PostId }) => {
             comment={comment}
             onSubmitComment={onSubmitComment}
             onChangeContents={onChangeContents}
+            onRemoveComment={onRemoveComment}
           />
         ))}
     </section>

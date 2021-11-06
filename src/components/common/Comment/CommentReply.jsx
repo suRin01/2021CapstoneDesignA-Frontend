@@ -16,6 +16,29 @@ const Wrapper = styled.section`
   .container {
     display: flex;
 
+    &:hover {
+      .option__button {
+        border-radius: 100%;
+        align-self: center;
+        height: 35px;
+        transition: all 0.75s;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+          transition: all 0s;
+        }
+        .option__icon {
+          display: inline-block;
+          background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yE/r/R3l5SniutOc.png");
+          background-position: -105px -107px;
+          background-size: auto;
+          width: 20px;
+          height: 20px;
+          background-repeat: no-repeat;
+        }
+      }
+    }
+
     .comment__data {
       display: flex;
       flex-direction: column;
@@ -39,9 +62,42 @@ const Wrapper = styled.section`
     }
   }
 `;
+const WrapperCommentMenu = styled.section`
+  position: relative;
 
-const CommentReply = ({ user, commentList, comment, onSubmitComment, onChangeContents }) => {
+  .menu {
+    position: absolute;
+    top: 50px;
+    left: 15px;
+    padding: 0.3rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    background: #ffffff;
+    transform: translateX(-50%);
+    z-index: 1;
+
+    button {
+      white-space: nowrap;
+      padding: 0.3rem 5rem;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+    }
+  }
+`;
+
+const CommentReply = ({
+  user,
+  commentList,
+  comment,
+  onSubmitComment,
+  onChangeContents,
+  onRemoveComment,
+}) => {
   const [isShowRecomment, onClickToggleRecomment] = useButton(false);
+  const [isShowOptionMenu, onClickOptionMenu] = useButton(false);
   const commentAvarterStyle = useMemo(
     () => ({ width: "35px", height: "35px", marginRight: "10px" }),
     [],
@@ -66,9 +122,10 @@ const CommentReply = ({ user, commentList, comment, onSubmitComment, onChangeCon
         comment={vComment}
         onSubmitComment={onSubmitComment}
         onChangeContents={onChangeContents}
+        onRemoveComment={onRemoveComment}
       />
     ));
-  }, [user, commentList, onSubmitComment, onChangeContents]);
+  }, [user, commentList, onSubmitComment, onChangeContents, onRemoveComment]);
 
   return (
     <Wrapper>
@@ -88,6 +145,22 @@ const CommentReply = ({ user, commentList, comment, onSubmitComment, onChangeCon
           {/* 댓글 내용 */}
           <pre>{comment.contents}</pre>
         </section>
+
+        {isShowOptionMenu && (
+          <WrapperCommentMenu>
+            <div className="menu">
+              <button type="button">수정</button>
+              <button type="button" onClick={() => onRemoveComment(comment._id)}>
+                삭제
+              </button>
+            </div>
+          </WrapperCommentMenu>
+        )}
+
+        {/* 댓글 수정 및 삭제를 위한 옵션버튼 */}
+        <button className="option__button">
+          <i className="option__icon" onClick={onClickOptionMenu} />
+        </button>
       </section>
 
       {/* 댓글의 옵션버튼들 ( 좋아요, 싫어요, 답글달기 ) */}
@@ -151,6 +224,7 @@ CommentReply.propTypes = {
   }).isRequired,
   onSubmitComment: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
+  onRemoveComment: PropTypes.func.isRequired,
 };
 
 export default CommentReply;

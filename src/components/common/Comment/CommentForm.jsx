@@ -34,7 +34,11 @@ const Wrapper = styled.form`
 const CommentForm = ({ onSubmitComment, onChangeContents, CommentId }) => {
   const [user] = useUser();
   const textareaRef = useRef();
-  const avarterStyle = useMemo(() => ({ width: "35px", height: "35px", marginRight: "10px" }));
+  const avarterStyle = useMemo(() => ({
+    width: "35px",
+    height: "35px",
+    marginRight: "10px",
+  }));
 
   return (
     <Wrapper onSubmit={e => onSubmitComment(e, CommentId, textareaRef)}>

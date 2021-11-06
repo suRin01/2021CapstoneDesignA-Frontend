@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
@@ -16,7 +16,31 @@ const Wrapper = styled.section`
   padding: 1rem 0 0 1rem;
 
   .container {
+    position: relative;
     display: flex;
+
+    &:hover {
+      .option__button {
+        border-radius: 100%;
+        align-self: center;
+        height: 35px;
+        transition: all 0.75s;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+          transition: all 0s;
+        }
+        .option__icon {
+          display: inline-block;
+          background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yE/r/R3l5SniutOc.png");
+          background-position: -105px -107px;
+          background-size: auto;
+          width: 20px;
+          height: 20px;
+          background-repeat: no-repeat;
+        }
+      }
+    }
 
     .comment__data {
       display: flex;
@@ -25,6 +49,7 @@ const Wrapper = styled.section`
       padding: 0.5rem;
       border-radius: 4px;
       box-shadow: 2px 2px 5px #d1d1d1;
+      margin-right: 1rem;
 
       .comment__writer {
         font-size: 0.8rem;
@@ -41,22 +66,54 @@ const Wrapper = styled.section`
     }
   }
 `;
+const WrapperCommentMenu = styled.section`
+  position: relative;
 
-const CommentSingle = ({ commentList, comment, onSubmitComment, onChangeContents }) => {
+  .menu {
+    position: absolute;
+    top: 50px;
+    left: 15px;
+    padding: 0.3rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    background: #ffffff;
+    transform: translateX(-50%);
+    z-index: 1;
+
+    button {
+      white-space: nowrap;
+      padding: 0.3rem 5rem;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+    }
+  }
+`;
+
+const CommentSingle = ({
+  commentList,
+  comment,
+  onSubmitComment,
+  onChangeContents,
+  onRemoveComment,
+}) => {
   const [user] = useUser();
   const [isShowRecomment, onClickToggleRecomment] = useButton(false);
+  const [isShowOptionMenu, onClickOptionMenu] = useButton(false);
   const commentAvarterStyle = useMemo(
     () => ({ width: "35px", height: "35px", marginRight: "10px" }),
     [],
   );
 
   // 대댓글 개수 ( 출력할 댓글의 아이디를 참조하는 댓글의 개수 구하기 )
-  const getRecommentNumber = () => {
+  const getRecommentNumber = useCallback(() => {
     return commentList.filter(vComment => vComment.CommentId === comment._id).length;
-  };
+  }, [commentList]);
 
   // 답글존재하면 답글보여주기
-  const showRecomment = () => {
+  const showRecomment = useCallback(() => {
     // 현 댓글의 대댓글들 찾기
     const recommentList = commentList.filter(vComment => vComment.CommentId === comment._id);
 
@@ -69,16 +126,17 @@ const CommentSingle = ({ commentList, comment, onSubmitComment, onChangeContents
         comment={vComment}
         onSubmitComment={onSubmitComment}
         onChangeContents={onChangeContents}
+        onRemoveComment={onRemoveComment}
       />
     ));
-  };
+  }, [commentList, user, onSubmitComment, onChangeContents, onRemoveComment]);
 
   return (
     <>
       {/* 대댓글이 아니라면 랜더링 */}
       {!comment.CommentId && (
         <Wrapper>
-          {/* 유저의 프로필이미지 -임시대체- */}
+          {/* 유저의 프로필이미지 */}
           <section className="container">
             <Avatar
               src={comment.User.Image.path}
@@ -94,6 +152,22 @@ const CommentSingle = ({ commentList, comment, onSubmitComment, onChangeContents
               {/* 댓글 내용 */}
               <pre>{comment.contents}</pre>
             </section>
+
+            {isShowOptionMenu && (
+              <WrapperCommentMenu>
+                <div className="menu">
+                  <button type="button">수정</button>
+                  <button type="button" onClick={() => onRemoveComment(comment._id)}>
+                    삭제
+                  </button>
+                </div>
+              </WrapperCommentMenu>
+            )}
+
+            {/* 댓글 수정 및 삭제를 위한 옵션버튼 */}
+            <button className="option__button">
+              <i className="option__icon" onClick={onClickOptionMenu} />
+            </button>
           </section>
 
           {/* 댓글의 옵션버튼들 ( 좋아요, 싫어요, 답글달기 ) */}
@@ -156,6 +230,7 @@ CommentSingle.propTypes = {
   }).isRequired,
   onSubmitComment: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
+  onRemoveComment: PropTypes.func.isRequired,
 };
 
 export default CommentSingle;
