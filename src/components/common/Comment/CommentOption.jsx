@@ -24,7 +24,14 @@ const Wrapper = styled.section`
   }
 `;
 
-const CommentOption = ({ updatedAt, onSubmitComment, onChangeContents, CommentId }) => {
+const CommentOption = ({
+  contents,
+  updatedAt,
+  onSubmitComment,
+  onChangeContents,
+  resizeContents,
+  CommentId,
+}) => {
   const [isShowForm, setIsShowComments] = useState(false);
 
   const onClickShowForm = () => {
@@ -40,8 +47,10 @@ const CommentOption = ({ updatedAt, onSubmitComment, onChangeContents, CommentId
       <span className="time">{timeFormat(updatedAt)}</span>
       {isShowForm && (
         <CommentForm
+          contents={contents}
           onSubmitComment={onSubmitComment}
           onChangeContents={onChangeContents}
+          resizeContents={resizeContents}
           CommentId={CommentId}
         />
       )}
@@ -50,9 +59,11 @@ const CommentOption = ({ updatedAt, onSubmitComment, onChangeContents, CommentId
 };
 
 CommentOption.propTypes = {
+  contents: PropTypes.string.isRequired,
   updatedAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
   onSubmitComment: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
+  resizeContents: PropTypes.func.isRequired,
   CommentId: PropTypes.number,
 };
 

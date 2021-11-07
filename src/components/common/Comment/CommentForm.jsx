@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
@@ -16,6 +16,7 @@ const Wrapper = styled.form`
     margin-right: 0.4rem;
     border-radius: 0.4rem;
     resize: none;
+    overflow: hidden;
   }
   .comments__btn {
     background-color: #000000;
@@ -31,7 +32,13 @@ const Wrapper = styled.form`
   }
 `;
 
-const CommentForm = ({ onSubmitComment, onChangeContents, CommentId }) => {
+const CommentForm = ({
+  contents,
+  onSubmitComment,
+  onChangeContents,
+  resizeContents,
+  CommentId,
+}) => {
   const [user] = useUser();
   const textareaRef = useRef();
   const avarterStyle = useMemo(() => ({
@@ -39,6 +46,15 @@ const CommentForm = ({ onSubmitComment, onChangeContents, CommentId }) => {
     height: "35px",
     marginRight: "10px",
   }));
+
+  const onEnterPress = useCallback(
+    e => {
+      if (e.keyCode === 13 && e.shiftKey === false) {
+        onSubmitComment(e, CommentId, textareaRef);
+      }
+    },
+    [contents, CommentId, textareaRef],
+  );
 
   return (
     <Wrapper onSubmit={e => onSubmitComment(e, CommentId, textareaRef)}>
@@ -53,6 +69,11 @@ const CommentForm = ({ onSubmitComment, onChangeContents, CommentId }) => {
         className="comments__textarea"
         onChange={onChangeContents}
         ref={textareaRef}
+        onKeyDown={e => {
+          onEnterPress(e);
+          resizeContents(textareaRef.current);
+        }}
+        onKeyUp={() => resizeContents(textareaRef.current)}
       />
       <button type="submit" className="comments__btn">
         생성
@@ -62,8 +83,10 @@ const CommentForm = ({ onSubmitComment, onChangeContents, CommentId }) => {
 };
 
 CommentForm.propTypes = {
+  contents: PropTypes.string.isRequired,
   onSubmitComment: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
+  resizeContents: PropTypes.func.isRequired,
   CommentId: PropTypes.number,
 };
 

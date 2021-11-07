@@ -21,12 +21,12 @@ const PostCardStyle = styled.ul`
   box-shadow: 0 0 10px gray;
 `;
 
-const PostCard = ({ post }) => {
+const PostCard = ({ post, onRemovePost }) => {
   const [isShowComment, onClickIsShowButton] = useButton(false);
 
   return (
     <PostCardStyle>
-      <PostCardTitle post={post}></PostCardTitle>
+      <PostCardTitle post={post} onRemovePost={onRemovePost}></PostCardTitle>
       <PostCardContent content={post.content}></PostCardContent>
       <PostCardImages Image={post.Image}></PostCardImages>
       <PostCardFooter Like={post.Like} Comment={post.Comment}></PostCardFooter>
@@ -70,7 +70,8 @@ PostCard.propTypes = {
         path: PropTypes.string.isRequired,
       }).isRequired,
     ).isRequired,
-  }),
+  }).isRequired,
+  onRemovePost: PropTypes.func.isRequired,
 };
 
 export default PostCard;

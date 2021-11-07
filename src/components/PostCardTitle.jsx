@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
+import { withRouter } from "react-router-dom";
 import styled from "styled-components";
+import PropTypes from "prop-types";
+
 import { timeFormat } from "../filter/dateGenerator";
+
+import useUser from "../hooks/useUser";
+import useButton from "../hooks/useButton";
 
 // components
 import Avatar from "./common/Avatar";
+import MenuCopy from "./common/MenuCopy";
 
 const TitleStyle = styled.li`
   display: flex;
@@ -49,7 +56,35 @@ const OptionButtonIconStyle = styled.i`
   background-repeat: no-repeat;
 `;
 
-const PostCardTitle = ({ post }) => {
+const PostCardTitle = ({ history, post, onRemovePost }) => {
+  const [user] = useUser();
+  const [isShowOptionMenu, onClickOptionMenu] = useButton(false);
+  const [isMine] = useState(user._id === post.User._id);
+
+  const showMenu = useCallback(() => {
+    if (isShowOptionMenu) {
+      if (isMine) {
+        return (
+          <MenuCopy>
+            <button type="button" onClick={() => history.push(`/write/${post._id}`)}>
+              수정
+            </button>
+            <button type="button" onClick={() => onRemovePost(post._id)}>
+              삭제
+            </button>
+          </MenuCopy>
+        );
+      } else {
+        return (
+          <MenuCopy>
+            <button type="button">게시글 숨기기</button>
+            <button type="button">게시글 신고하기</button>
+          </MenuCopy>
+        );
+      }
+    }
+  }, [isMine, isShowOptionMenu]);
+
   return (
     <TitleStyle>
       <TitleLeftStyle>
@@ -64,11 +99,44 @@ const PostCardTitle = ({ post }) => {
       </TitleLeftStyle>
 
       {/* 옵션버튼 ( 게시글 수정 및 삭제 ) */}
-      <OptionButtonStyle type="button">
+      <OptionButtonStyle type="button" onClick={onClickOptionMenu}>
         <OptionButtonIconStyle></OptionButtonIconStyle>
+        {showMenu()}
       </OptionButtonStyle>
     </TitleStyle>
   );
 };
 
-export default PostCardTitle;
+PostCardTitle.propTypes = {
+  post: PropTypes.shape({
+    _id: PropTypes.number.isRequired,
+    content: PropTypes.string.isRequired,
+    updatedAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
+    User: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      Image: PropTypes.shape({
+        path: PropTypes.string.isRequired,
+      }).isRequired,
+    }).isRequired,
+    Like: PropTypes.arrayOf(
+      PropTypes.shape({
+        _id: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+      }).isRequired,
+    ).isRequired,
+    Comment: PropTypes.arrayOf(
+      PropTypes.shape({
+        _id: PropTypes.number.isRequired,
+      }).isRequired,
+    ).isRequired,
+    Image: PropTypes.arrayOf(
+      PropTypes.shape({
+        _id: PropTypes.number.isRequired,
+        path: PropTypes.string.isRequired,
+      }).isRequired,
+    ).isRequired,
+  }).isRequired,
+  onRemovePost: PropTypes.func.isRequired,
+};
+
+export default withRouter(PostCardTitle);

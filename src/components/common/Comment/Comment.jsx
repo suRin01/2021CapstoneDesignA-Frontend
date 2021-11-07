@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 
 import useUser from "../../../hooks/useUser";
-import useInput from "../../../hooks/useInput";
+import useTextArea from "../../../hooks/useTextArea";
 
 // import { apiFetchComments, apiAppendComment, apiRemoveComment } from "../../../api";
 
@@ -12,7 +12,7 @@ import CommentSingle from "./CommentSingle";
 const Comment = ({ PostId }) => {
   const [user] = useUser();
   const [comments, setComments] = useState([]);
-  const [contents, onChangeContents] = useInput("");
+  const [contents, onChangeContents, , resizeContents] = useTextArea("");
 
   // 해당 게시글의 댓글들 패치
   const onFetchComments = useCallback(async () => {
@@ -99,16 +99,23 @@ const Comment = ({ PostId }) => {
 
   return (
     <section className="comments__container">
-      <CommentForm onSubmitComment={onSubmitComment} onChangeContents={onChangeContents} />
+      <CommentForm
+        contents={contents}
+        onSubmitComment={onSubmitComment}
+        onChangeContents={onChangeContents}
+        resizeContents={resizeContents}
+      />
       {comments &&
         comments.map(comment => (
           <CommentSingle
             key={comment._id}
             commentList={comments}
             comment={comment}
+            contents={contents}
             onSubmitComment={onSubmitComment}
             onChangeContents={onChangeContents}
             onRemoveComment={onRemoveComment}
+            resizeContents={resizeContents}
           />
         ))}
     </section>

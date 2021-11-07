@@ -9,6 +9,7 @@ import Avatar from "../Avatar";
 
 import CommentOption from "./CommentOption";
 import CommentReply from "./CommentReply";
+import MenuCopy from "../MenuCopy";
 
 const Wrapper = styled.section`
   display: flex;
@@ -66,38 +67,15 @@ const Wrapper = styled.section`
     }
   }
 `;
-const WrapperCommentMenu = styled.section`
-  position: relative;
-
-  .menu {
-    position: absolute;
-    top: 50px;
-    left: 15px;
-    padding: 0.3rem;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-    background: #ffffff;
-    transform: translateX(-50%);
-    z-index: 1;
-
-    button {
-      white-space: nowrap;
-      padding: 0.3rem 5rem;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-      }
-    }
-  }
-`;
 
 const CommentSingle = ({
   commentList,
   comment,
+  contents,
   onSubmitComment,
   onChangeContents,
   onRemoveComment,
+  resizeContents,
 }) => {
   const [user] = useUser();
   const [isShowRecomment, onClickToggleRecomment] = useButton(false);
@@ -124,9 +102,11 @@ const CommentSingle = ({
         user={user}
         commentList={commentList}
         comment={vComment}
+        contents={contents}
         onSubmitComment={onSubmitComment}
         onChangeContents={onChangeContents}
         onRemoveComment={onRemoveComment}
+        resizeContents={resizeContents}
       />
     ));
   }, [commentList, user, onSubmitComment, onChangeContents, onRemoveComment]);
@@ -154,14 +134,12 @@ const CommentSingle = ({
             </section>
 
             {isShowOptionMenu && (
-              <WrapperCommentMenu>
-                <div className="menu">
-                  <button type="button">수정</button>
-                  <button type="button" onClick={() => onRemoveComment(comment._id)}>
-                    삭제
-                  </button>
-                </div>
-              </WrapperCommentMenu>
+              <MenuCopy>
+                <button type="button">수정</button>
+                <button type="button" onClick={() => onRemoveComment(comment._id)}>
+                  삭제
+                </button>
+              </MenuCopy>
             )}
 
             {/* 댓글 수정 및 삭제를 위한 옵션버튼 */}
@@ -172,9 +150,11 @@ const CommentSingle = ({
 
           {/* 댓글의 옵션버튼들 ( 좋아요, 싫어요, 답글달기 ) */}
           <CommentOption
+            contents={contents}
             updatedAt={comment.updatedAt}
             onSubmitComment={onSubmitComment}
             onChangeContents={onChangeContents}
+            resizeContents={resizeContents}
             CommentId={comment._id}
           />
 
@@ -228,9 +208,11 @@ CommentSingle.propTypes = {
       CommentId: PropTypes.number,
     }),
   }).isRequired,
+  contents: PropTypes.string.isRequired,
   onSubmitComment: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
   onRemoveComment: PropTypes.func.isRequired,
+  resizeContents: PropTypes.func.isRequired,
 };
 
 export default CommentSingle;

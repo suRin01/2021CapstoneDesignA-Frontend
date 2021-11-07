@@ -1,11 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 
 // components
 import PostCard from "../components/PostCard";
 
+// import { apiFetchPosts } from "../api";
+
 const PostCardStyle = styled.section`
   width: 100%;
+`;
+const WritePostWrapper = styled.section`
+  margin-bottom: 3vh;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px grey;
+
+  button {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.075);
+    border-radius: 5px;
+    padding: 0.8rem;
+    transition: all 1s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+      transition: all 0s;
+    }
+  }
 `;
 
 // 임시
@@ -15,7 +38,7 @@ faker.locale = "ko";
 function fakeDataGenerator() {
   return {
     _id: faker.datatype.number(),
-    content: faker.lorem.text(),
+    content: "서버랑 연동하면 입력한 텍스트로 게시글 추가됨",
     updatedAt: faker.date.between("2021-01-01", "2021-10-06"),
     User: {
       name: faker.name.findName(),
@@ -72,7 +95,7 @@ function fakeDataGenerator() {
   };
 }
 
-const HomePage = () => {
+const HomePage = ({ history }) => {
   const [posts, setPosts] = useState([
     {
       // 게시글자체에 연관된 내용
@@ -82,6 +105,7 @@ const HomePage = () => {
 
       // 게시글을 작성한 유저
       User: {
+        _id: 1,
         name: "testUser",
         // 게시글 작성 유저의 프로필이미지
         Image: {
@@ -121,48 +145,57 @@ const HomePage = () => {
         },
       ],
     },
-    fakeDataGenerator(),
-    fakeDataGenerator(),
-    fakeDataGenerator(),
-    fakeDataGenerator(),
-    fakeDataGenerator(),
-    fakeDataGenerator(),
   ]);
+  const [isThrottling, setIsThrottling] = useState(false);
+
+  // 게시글 패치
+  const fetchPosts = useCallback(async () => {
+    // 게시글 가져오기 api 호출
+    const lastId = posts[posts.length - 1]._id;
+    // await apiFetchPosts(lastId)
+
+    // 임시처리
+    setPosts(prev => [...prev, fakeDataGenerator()]);
+  }, []);
 
   // 최초 게시글들의 데이터 불러오기
   useEffect(() => {
-    console.log("여기서 게시글 데이터 10개 불러오기");
+    fetchPosts();
   }, []);
 
-  // 무한 스크롤링처리
+  // 무한 스크롤링처리 + 스로틀링
   useEffect(() => {
     // 스크롤이벤트에 등록할 함수
-    function scrollToLoad() {
+    async function scrollToLoad() {
       if (
         window.scrollY + document.documentElement.clientHeight >
-        document.documentElement.scrollHeight - 500
+          document.documentElement.scrollHeight - 500 &&
+        !isThrottling
       ) {
-        const lastId = posts[posts.length - 1]._id;
+        setIsThrottling(true);
+        // const lastId = posts[posts.length - 1]._id;
+        // const posts = await apiFetchPosts(lastId)
+        // setPosts(prev => [...prev, ...posts]);
+        console.log("스크롤");
 
-        // 임시.. 실제로 처리할 땐 몇가지 더 추가해야함
-        setPosts(prev => [
-          ...prev,
-          fakeDataGenerator(),
-          fakeDataGenerator(),
-          fakeDataGenerator(),
-          fakeDataGenerator(),
-          fakeDataGenerator(),
-        ]);
+        // 지금은 임시로 setTimeout()사용했지만 나중에는 await에서 응답올 때 까지 기다리고 실행하므로
+        // api요청을 한번만 보내고 응답할 때 까지 재요청 보내지 않음
+        setTimeout(() => {
+          setIsThrottling(false);
+        }, 1000);
       }
     }
-
     // 스크롤이벤트 등록
     document.addEventListener("scroll", scrollToLoad);
-
     // 스크롤이벤트 등록해제
     return () => {
       document.removeEventListener("scroll", scrollToLoad);
     };
+  }, [isThrottling]);
+
+  // 게시글 삭제
+  const onRemovePost = useCallback(PostId => {
+    setPosts(prev => prev.filter(post => post._id !== PostId));
   }, []);
 
   if (!posts) return <h2>게시글 데이터를 불러오는 중입니다...</h2>;
@@ -170,12 +203,18 @@ const HomePage = () => {
   return (
     <>
       <PostCardStyle>
+        <WritePostWrapper>
+          <button type="button" onClick={() => history.push("/write")}>
+            게시글 생성하기
+          </button>
+        </WritePostWrapper>
+
         {posts.map(post => (
-          <PostCard key={post._id} post={post} />
+          <PostCard key={post._id} post={post} onRemovePost={onRemovePost} />
         ))}
       </PostCardStyle>
     </>
   );
 };
 
-export default HomePage;
+export default withRouter(HomePage);
