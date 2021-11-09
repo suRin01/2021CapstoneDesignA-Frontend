@@ -65,7 +65,7 @@ const Wrapper = styled.section`
 `;
 
 const CommentReply = ({
-  user,
+  profileImagePath,
   commentList,
   comment,
   contents,
@@ -95,7 +95,7 @@ const CommentReply = ({
     return recommentList.map(vComment => (
       <CommentReply
         key={vComment._id}
-        user={user}
+        profileImagePath={profileImagePath}
         commentList={commentList}
         comment={vComment}
         contents={contents}
@@ -105,7 +105,7 @@ const CommentReply = ({
         resizeContents={resizeContents}
       />
     ));
-  }, [user, commentList, onSubmitComment, onChangeContents, onRemoveComment]);
+  }, [profileImagePath, commentList, onSubmitComment, onChangeContents, onRemoveComment]);
 
   return (
     <Wrapper>
@@ -143,6 +143,7 @@ const CommentReply = ({
 
       {/* 댓글의 옵션버튼들 ( 좋아요, 싫어요, 답글달기 ) */}
       <CommentOption
+        profileImagePath={profileImagePath}
         contents={contents}
         updatedAt={comment.updatedAt}
         onSubmitComment={onSubmitComment}
@@ -165,13 +166,7 @@ const CommentReply = ({
 };
 
 CommentReply.propTypes = {
-  user: PropTypes.shape({
-    _id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    Image: PropTypes.shape({
-      path: PropTypes.string.isRequired,
-    }),
-  }).isRequired,
+  profileImagePath: PropTypes.string,
   commentList: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.number.isRequired,

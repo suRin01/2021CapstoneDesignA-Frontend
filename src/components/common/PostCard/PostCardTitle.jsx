@@ -3,14 +3,13 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
-import { timeFormat } from "../filter/dateGenerator";
+import { timeFormat } from "../../../filter/dateGenerator";
 
-import useUser from "../hooks/useUser";
-import useButton from "../hooks/useButton";
+import useButton from "../../../hooks/useButton";
 
 // components
-import Avatar from "./common/Avatar";
-import MenuCopy from "./common/MenuCopy";
+import Avatar from "../../common/Avatar";
+import MenuCopy from "../../common/MenuCopy";
 
 const TitleStyle = styled.li`
   display: flex;
@@ -56,10 +55,9 @@ const OptionButtonIconStyle = styled.i`
   background-repeat: no-repeat;
 `;
 
-const PostCardTitle = ({ history, post, onRemovePost }) => {
-  const [user] = useUser();
+const PostCardTitle = ({ history, user, post, onRemovePost }) => {
   const [isShowOptionMenu, onClickOptionMenu] = useButton(false);
-  const [isMine] = useState(user._id === post.User._id);
+  const [isMine] = useState(user?._id === post.User._id);
 
   const showMenu = useCallback(() => {
     if (isShowOptionMenu) {
@@ -108,6 +106,15 @@ const PostCardTitle = ({ history, post, onRemovePost }) => {
 };
 
 PostCardTitle.propTypes = {
+  user: PropTypes.oneOfType([
+    PropTypes.shape({
+      _id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      Image: PropTypes.shape({
+        path: PropTypes.string.isRequired,
+      }),
+    }),
+  ]),
   post: PropTypes.shape({
     _id: PropTypes.number.isRequired,
     content: PropTypes.string.isRequired,

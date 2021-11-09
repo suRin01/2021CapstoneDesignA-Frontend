@@ -25,6 +25,7 @@ const Wrapper = styled.section`
 `;
 
 const CommentOption = ({
+  profileImagePath,
   contents,
   updatedAt,
   onSubmitComment,
@@ -47,6 +48,7 @@ const CommentOption = ({
       <span className="time">{timeFormat(updatedAt)}</span>
       {isShowForm && (
         <CommentForm
+          profileImagePath={profileImagePath}
           contents={contents}
           onSubmitComment={onSubmitComment}
           onChangeContents={onChangeContents}
@@ -59,6 +61,7 @@ const CommentOption = ({
 };
 
 CommentOption.propTypes = {
+  profileImagePath: PropTypes.string,
   contents: PropTypes.string.isRequired,
   updatedAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
   onSubmitComment: PropTypes.func.isRequired,

@@ -2,7 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
-import useButton from "../hooks/useButton";
+import useUser from "../../../hooks/useUser";
+import useButton from "../../../hooks/useButton";
 
 // components
 import PostCardTitle from "./PostCardTitle";
@@ -10,7 +11,7 @@ import PostCardContent from "./PostCardContent";
 import PostCardImages from "./PostCardImages";
 import PostCardFooter from "./PostCardFooter";
 import PostCardButtons from "./PostCardButtons";
-import Comment from "./common/Comment/Comment";
+import Comment from "../Comment/Comment";
 
 const PostCardStyle = styled.ul`
   width: 100%;
@@ -22,11 +23,12 @@ const PostCardStyle = styled.ul`
 `;
 
 const PostCard = ({ post, onRemovePost }) => {
+  const [user] = useUser();
   const [isShowComment, onClickIsShowButton] = useButton(false);
 
   return (
     <PostCardStyle>
-      <PostCardTitle post={post} onRemovePost={onRemovePost}></PostCardTitle>
+      <PostCardTitle user={user} post={post} onRemovePost={onRemovePost}></PostCardTitle>
       <PostCardContent content={post.content}></PostCardContent>
       <PostCardImages Image={post.Image}></PostCardImages>
       <PostCardFooter Like={post.Like} Comment={post.Comment}></PostCardFooter>
@@ -35,7 +37,7 @@ const PostCard = ({ post, onRemovePost }) => {
       {isShowComment && (
         <>
           <hr />
-          <Comment PostId={post._id} />
+          <Comment user={user} PostId={post._id} />
         </>
       )}
     </PostCardStyle>

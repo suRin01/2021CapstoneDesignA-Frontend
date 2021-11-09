@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 
-import useUser from "../../../hooks/useUser";
 import useTextArea from "../../../hooks/useTextArea";
 
 // import { apiFetchComments, apiAppendComment, apiRemoveComment } from "../../../api";
@@ -9,8 +8,7 @@ import useTextArea from "../../../hooks/useTextArea";
 import CommentForm from "./CommentForm";
 import CommentSingle from "./CommentSingle";
 
-const Comment = ({ PostId }) => {
-  const [user] = useUser();
+const Comment = ({ user, PostId }) => {
   const [comments, setComments] = useState([]);
   const [contents, onChangeContents, , resizeContents] = useTextArea("");
 
@@ -100,6 +98,7 @@ const Comment = ({ PostId }) => {
   return (
     <section className="comments__container">
       <CommentForm
+        profileImagePath={user?.Image.path}
         contents={contents}
         onSubmitComment={onSubmitComment}
         onChangeContents={onChangeContents}
@@ -109,6 +108,7 @@ const Comment = ({ PostId }) => {
         comments.map(comment => (
           <CommentSingle
             key={comment._id}
+            profileImagePath={user?.Image.path}
             commentList={comments}
             comment={comment}
             contents={contents}
@@ -123,6 +123,15 @@ const Comment = ({ PostId }) => {
 };
 
 Comment.propTypes = {
+  user: PropTypes.oneOfType([
+    PropTypes.shape({
+      _id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      Image: PropTypes.shape({
+        path: PropTypes.string.isRequired,
+      }),
+    }),
+  ]),
   PostId: PropTypes.number.isRequired,
 };
 

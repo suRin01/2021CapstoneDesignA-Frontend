@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 
 // components
-import PostCard from "../components/PostCard";
+import PostCard from "../components/common/PostCard/PostCard";
 
 // import { apiFetchPosts } from "../api";
 

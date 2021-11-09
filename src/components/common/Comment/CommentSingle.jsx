@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import useUser from "../../../hooks/useUser";
 import useButton from "../../../hooks/useButton";
 
 import Avatar from "../Avatar";
@@ -69,6 +68,7 @@ const Wrapper = styled.section`
 `;
 
 const CommentSingle = ({
+  profileImagePath,
   commentList,
   comment,
   contents,
@@ -77,7 +77,6 @@ const CommentSingle = ({
   onRemoveComment,
   resizeContents,
 }) => {
-  const [user] = useUser();
   const [isShowRecomment, onClickToggleRecomment] = useButton(false);
   const [isShowOptionMenu, onClickOptionMenu] = useButton(false);
   const commentAvarterStyle = useMemo(
@@ -99,7 +98,7 @@ const CommentSingle = ({
     return recommentList.map(vComment => (
       <CommentReply
         key={vComment._id}
-        user={user}
+        profileImagePath={profileImagePath}
         commentList={commentList}
         comment={vComment}
         contents={contents}
@@ -109,7 +108,7 @@ const CommentSingle = ({
         resizeContents={resizeContents}
       />
     ));
-  }, [commentList, user, onSubmitComment, onChangeContents, onRemoveComment]);
+  }, [profileImagePath, commentList, onSubmitComment, onChangeContents, onRemoveComment]);
 
   return (
     <>
@@ -150,6 +149,7 @@ const CommentSingle = ({
 
           {/* 댓글의 옵션버튼들 ( 좋아요, 싫어요, 답글달기 ) */}
           <CommentOption
+            profileImagePath={profileImagePath}
             contents={contents}
             updatedAt={comment.updatedAt}
             onSubmitComment={onSubmitComment}
@@ -178,6 +178,7 @@ const CommentSingle = ({
 };
 
 CommentSingle.propTypes = {
+  profileImagePath: PropTypes.string,
   commentList: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.number.isRequired,

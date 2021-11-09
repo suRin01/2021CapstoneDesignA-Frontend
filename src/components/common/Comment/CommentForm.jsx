@@ -2,8 +2,6 @@ import React, { useCallback, useMemo, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import useUser from "../../../hooks/useUser";
-
 import Avatar from "../Avatar";
 
 const Wrapper = styled.form`
@@ -33,13 +31,13 @@ const Wrapper = styled.form`
 `;
 
 const CommentForm = ({
+  profileImagePath,
   contents,
   onSubmitComment,
   onChangeContents,
   resizeContents,
   CommentId,
 }) => {
-  const [user] = useUser();
   const textareaRef = useRef();
   const avarterStyle = useMemo(() => ({
     width: "35px",
@@ -58,8 +56,8 @@ const CommentForm = ({
 
   return (
     <Wrapper onSubmit={e => onSubmitComment(e, CommentId, textareaRef)}>
-      {user ? (
-        <Avatar src={user.Image.path} alt="유저 프로필 이미지" style={avarterStyle} />
+      {profileImagePath ? (
+        <Avatar src={profileImagePath} alt="유저 프로필 이미지" style={avarterStyle} />
       ) : (
         <Avatar alt="유저 프로필 이미지" style={avarterStyle} />
       )}
@@ -83,6 +81,7 @@ const CommentForm = ({
 };
 
 CommentForm.propTypes = {
+  profileImagePath: PropTypes.string,
   contents: PropTypes.string.isRequired,
   onSubmitComment: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
