@@ -2,7 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
-const ButtonsStyle = styled.li`
+import useButton from "../../../hooks/useButton";
+
+const ButtonWrapper = styled.li`
   display: flex;
   justify-content: space-around;
   padding: 0 2rem;
@@ -19,20 +21,39 @@ const ButtonsStyle = styled.li`
   }
 `;
 
-const PostCardButtons = ({ onClickIsShowButton }) => {
+const PostCardButtons = ({ UserId, PostId, onClickIsShowButton, onToggleLike, Like }) => {
+  const [isLike, onClickIsLike] = useButton(Like.some(like => like._id === UserId));
+
   return (
-    <ButtonsStyle>
-      <button type="button">좋아요</button>
+    <ButtonWrapper>
+      <button
+        type="button"
+        onClick={() => {
+          onToggleLike(PostId);
+          onClickIsLike();
+        }}
+      >
+        {isLike ? "좋아요 취소" : "좋아요"}
+      </button>
       <button type="button" onClick={onClickIsShowButton}>
         댓글달기
       </button>
       <button type="button">공유하기</button>
-    </ButtonsStyle>
+    </ButtonWrapper>
   );
 };
 
 PostCardButtons.propTypes = {
+  UserId: PropTypes.number.isRequired,
+  PostId: PropTypes.number.isRequired,
   onClickIsShowButton: PropTypes.func.isRequired,
+  onToggleLike: PropTypes.func.isRequired,
+  Like: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+    }).isRequired,
+  ).isRequired,
 };
 
 export default PostCardButtons;

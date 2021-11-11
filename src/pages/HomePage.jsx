@@ -5,6 +5,8 @@ import styled from "styled-components";
 // components
 import PostCard from "../components/common/PostCard/PostCard";
 
+import useUser from "../hooks/useUser";
+
 // import { apiFetchPosts } from "../api";
 
 const PostCardStyle = styled.section`
@@ -47,16 +49,7 @@ function fakeDataGenerator() {
       },
     },
 
-    Like: [
-      {
-        _id: 1,
-        name: "aa",
-      },
-      {
-        _id: 2,
-        name: "bb",
-      },
-    ],
+    Like: [],
 
     Comment: [
       {
@@ -96,6 +89,7 @@ function fakeDataGenerator() {
 }
 
 const HomePage = ({ history }) => {
+  const [user] = useUser();
   const [posts, setPosts] = useState([
     {
       // 게시글자체에 연관된 내용
@@ -126,17 +120,7 @@ const HomePage = ({ history }) => {
       ],
 
       // 게시글에 댓글단 사람 리스트 ( 여기 데이터는 개수를 세기위한 데이터라 식별자만 요청함... 나중에 댓글보기를 클릭할 경우 해당 게시글의 댓글을 10개씩 끊어서 가져오도록 설계하기 )
-      Comment: [
-        {
-          _id: 1,
-        },
-        {
-          _id: 2,
-        },
-        {
-          _id: 3,
-        },
-      ],
+      Comment: [],
 
       Image: [
         {
@@ -198,6 +182,85 @@ const HomePage = ({ history }) => {
     setPosts(prev => prev.filter(post => post._id !== PostId));
   }, []);
 
+  // 댓글 추가 ( 댓글 추가시 refetch하지않고 임시로 아이디만 하나 추가해서 댓글이 하나 늘어난 것처럼 보이게 만듦 )
+  const onAppendComment = useCallback((PostId, CommentId, RecommentId) => {
+    setPosts(prev => {
+      return prev.map(post => {
+        if (post._id === PostId) {
+          return {
+            ...post,
+            Comment: [...post.Comment, { _id: CommentId, CommentId: RecommentId }],
+          };
+        }
+        return post;
+      });
+    });
+  }, []);
+
+  // 댓글 삭제 ( 댓글 삭제시 refetch하지않고 삭제될 댓글의 아이디를 이용해서 제거함 )
+  // **댓글의 대댓글의 대댓글 이후부터는 삭제가 안되는데 그거는 추후에 처리함**
+  const onRemoveCommentTemp = useCallback((PostId, CommentId) => {
+    setPosts(prev => {
+      return prev.map(post => {
+        if (post._id === PostId) {
+          return {
+            ...post,
+            Comment: post.Comment.filter(comment => {
+              if (comment._id === CommentId) {
+                return false;
+              }
+              if (comment.CommentId === CommentId) {
+                return false;
+              }
+              return true;
+            }),
+          };
+        }
+        return post;
+      });
+    });
+  }, []);
+
+  // 좋아요 눌렀을 때
+  const onToggleLike = useCallback(
+    PostId => {
+      if (!user) return alert("로그인 후에 접근해주세요!");
+
+      const targetPost = posts.filter(post => post._id === PostId);
+      const isLike = targetPost[0].Like.some(v => v._id === user._id);
+
+      // 이미 좋아요를 눌렀다면 좋아요 삭제
+      if (isLike) {
+        setPosts(prev =>
+          prev.map(post => {
+            if (post === targetPost[0]) {
+              return {
+                ...post,
+                Like: post.Like.filter(v => v._id !== user._id),
+              };
+            }
+            return post;
+          }),
+        );
+      }
+      // 좋아요를 누르지 않았다면 좋아요 추가
+      else {
+        setPosts(prev =>
+          prev.map(post => {
+            if (post === targetPost[0]) {
+              return {
+                ...post,
+                Like: [...post.Like, { _id: user._id, name: user.name }],
+              };
+            }
+            return post;
+          }),
+        );
+      }
+    },
+    [user, posts],
+  );
+
   if (!posts) return <h2>게시글 데이터를 불러오는 중입니다...</h2>;
 
   return (
@@ -210,7 +273,14 @@ const HomePage = ({ history }) => {
         </WritePostWrapper>
 
         {posts.map(post => (
-          <PostCard key={post._id} post={post} onRemovePost={onRemovePost} />
+          <PostCard
+            key={post._id}
+            post={post}
+            onRemovePost={onRemovePost}
+            onAppendComment={onAppendComment}
+            onRemoveCommentTemp={onRemoveCommentTemp}
+            onToggleLike={onToggleLike}
+          />
         ))}
       </PostCardStyle>
     </>

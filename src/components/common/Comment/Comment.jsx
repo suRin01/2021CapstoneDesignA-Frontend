@@ -8,7 +8,7 @@ import useTextArea from "../../../hooks/useTextArea";
 import CommentForm from "./CommentForm";
 import CommentSingle from "./CommentSingle";
 
-const Comment = ({ user, PostId }) => {
+const Comment = ({ user, PostId, onAppendComment, onRemoveCommentTemp }) => {
   const [comments, setComments] = useState([]);
   const [contents, onChangeContents, , resizeContents] = useTextArea("");
 
@@ -20,7 +20,7 @@ const Comment = ({ user, PostId }) => {
     setComments(prev => [
       ...prev,
       {
-        _id: Date.now(),
+        _id: Math.floor(new Date().getTime() / 1000),
         contents,
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -57,7 +57,7 @@ const Comment = ({ user, PostId }) => {
         setComments(prev => [
           ...prev,
           {
-            _id: Date.now(),
+            _id: Math.floor(new Date().getTime() / 1000),
             contents,
             createdAt: Date.now(),
             updatedAt: Date.now(),
@@ -65,9 +65,15 @@ const Comment = ({ user, PostId }) => {
             CommentId,
           },
         ]);
+
+        // 댓글 수 + 1 // 대댓글
+        onAppendComment(PostId, Math.floor(new Date().getTime() / 1000), CommentId);
       } else {
-        // await apiAppendComments({ UserId: user._id, PostId, contents, CommentId });
+        // const { CommentId } = await apiAppendComments({ UserId: user._id, PostId, contents, CommentId });
         onFetchComments();
+
+        // 댓글 수 + 1 // DB연결후 추가한 댓글의 아이디 전달 (CommentId)
+        onAppendComment(PostId, Math.floor(new Date().getTime() / 1000));
       }
 
       // 댓글 내용 초기화
@@ -75,25 +81,29 @@ const Comment = ({ user, PostId }) => {
 
       // 대댓글 입력했다면 창닫기
       onClickToggleRecomment?.();
-      console.log("onClickToggleRecomment >> ", onClickToggleRecomment);
     },
-    [user, PostId, contents],
+    [user, PostId, contents, onAppendComment],
   );
 
   // 댓글 삭제
-  const onRemoveComment = useCallback(async CommentId => {
-    // api요청
-    // apiRemoveComment(CommentId)
+  const onRemoveComment = useCallback(
+    async CommentId => {
+      // api요청
+      // apiRemoveComment(CommentId)
 
-    // 해당 댓글과 대댓글 직접 삭제하기
-    setComments(prev =>
-      prev.filter(comment => {
-        if (comment._id === CommentId) return false;
-        if (comment.CommentId === CommentId) return false;
-        return true;
-      }),
-    );
-  }, []);
+      // 해당 댓글과 대댓글 직접 삭제하기
+      setComments(prev =>
+        prev.filter(comment => {
+          if (comment._id === CommentId) return false;
+          if (comment.CommentId === CommentId) return false;
+          return true;
+        }),
+      );
+
+      onRemoveCommentTemp(PostId, CommentId);
+    },
+    [PostId, onRemoveCommentTemp],
+  );
 
   return (
     <section className="comments__container">
@@ -133,6 +143,8 @@ Comment.propTypes = {
     }),
   ]),
   PostId: PropTypes.number.isRequired,
+  onAppendComment: PropTypes.func.isRequired,
+  onRemoveCommentTemp: PropTypes.func.isRequired,
 };
 
 export default Comment;
