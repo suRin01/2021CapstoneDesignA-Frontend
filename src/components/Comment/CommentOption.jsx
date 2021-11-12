@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import { timeFormat } from "../../../filter/dateGenerator";
-
+// component
 import CommentForm from "./CommentForm";
+
+// util
+import { timeFormat } from "../../util";
 
 const Wrapper = styled.section`
   margin-left: 45px;
@@ -28,9 +30,9 @@ const CommentOption = ({
   profileImagePath,
   contents,
   updatedAt,
-  onSubmitComment,
+  onAddCommentExcute,
   onChangeContents,
-  resizeContents,
+  resizeTextarea,
   CommentId,
 }) => {
   const [isShowForm, setIsShowComments] = useState(false);
@@ -50,9 +52,9 @@ const CommentOption = ({
         <CommentForm
           profileImagePath={profileImagePath}
           contents={contents}
-          onSubmitComment={onSubmitComment}
+          onAddCommentExcute={onAddCommentExcute}
           onChangeContents={onChangeContents}
-          resizeContents={resizeContents}
+          resizeTextarea={resizeTextarea}
           CommentId={CommentId}
         />
       )}
@@ -64,9 +66,9 @@ CommentOption.propTypes = {
   profileImagePath: PropTypes.string,
   contents: PropTypes.string.isRequired,
   updatedAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
-  onSubmitComment: PropTypes.func.isRequired,
+  onAddCommentExcute: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
-  resizeContents: PropTypes.func.isRequired,
+  resizeTextarea: PropTypes.func.isRequired,
   CommentId: PropTypes.number,
 };
 

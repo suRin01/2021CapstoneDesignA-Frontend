@@ -2,12 +2,13 @@ import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import useButton from "../../../hooks/useButton";
-
-import Avatar from "../Avatar";
-
+// component
 import CommentOption from "./CommentOption";
-import MenuCopy from "../MenuCopy";
+import Avatar from "../common/Avatar";
+import Menu from "../common/Menu";
+
+// 사용자 정의 hook
+import useButton from "../../hooks/useButton";
 
 const Wrapper = styled.section`
   display: flex;
@@ -69,10 +70,10 @@ const CommentReply = ({
   commentList,
   comment,
   contents,
-  onSubmitComment,
+  onAddCommentExcute,
   onChangeContents,
-  onRemoveComment,
-  resizeContents,
+  onRemoveCommentExcute,
+  resizeTextarea,
 }) => {
   const [isShowRecomment, onClickToggleRecomment] = useButton(false);
   const [isShowOptionMenu, onClickOptionMenu] = useButton(false);
@@ -99,17 +100,17 @@ const CommentReply = ({
         commentList={commentList}
         comment={vComment}
         contents={contents}
-        onSubmitComment={onSubmitComment}
+        onAddCommentExcute={onAddCommentExcute}
         onChangeContents={onChangeContents}
-        onRemoveComment={onRemoveComment}
-        resizeContents={resizeContents}
+        onRemoveCommentExcute={onRemoveCommentExcute}
+        resizeTextarea={resizeTextarea}
       />
     ));
-  }, [profileImagePath, commentList, onSubmitComment, onChangeContents, onRemoveComment]);
+  }, [profileImagePath, commentList, onAddCommentExcute, onChangeContents, onRemoveCommentExcute]);
 
   return (
     <Wrapper>
-      {/* 유저의 프로필이미지 -임시대체- */}
+      {/* 유저의 프로필이미지 */}
       <section className="container">
         <Avatar
           src={comment.User.Image.path}
@@ -126,13 +127,14 @@ const CommentReply = ({
           <pre>{comment.contents}</pre>
         </section>
 
+        {/* 대댓글 메뉴 */}
         {isShowOptionMenu && (
-          <MenuCopy>
+          <Menu menu>
             <button type="button">수정</button>
-            <button type="button" onClick={() => onRemoveComment(comment._id)}>
+            <button type="button" onClick={() => onRemoveCommentExcute(comment._id)}>
               삭제
             </button>
-          </MenuCopy>
+          </Menu>
         )}
 
         {/* 댓글 수정 및 삭제를 위한 옵션버튼 */}
@@ -146,9 +148,9 @@ const CommentReply = ({
         profileImagePath={profileImagePath}
         contents={contents}
         updatedAt={comment.updatedAt}
-        onSubmitComment={onSubmitComment}
+        onAddCommentExcute={onAddCommentExcute}
         onChangeContents={onChangeContents}
-        resizeContents={resizeContents}
+        resizeTextarea={resizeTextarea}
         CommentId={comment._id}
       />
 
@@ -198,10 +200,10 @@ CommentReply.propTypes = {
     }),
   }).isRequired,
   contents: PropTypes.string.isRequired,
-  onSubmitComment: PropTypes.func.isRequired,
+  onAddCommentExcute: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
-  onRemoveComment: PropTypes.func.isRequired,
-  resizeContents: PropTypes.func.isRequired,
+  onRemoveCommentExcute: PropTypes.func.isRequired,
+  resizeTextarea: PropTypes.func.isRequired,
 };
 
 export default CommentReply;

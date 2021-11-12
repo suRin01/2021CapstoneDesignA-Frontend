@@ -1,19 +1,23 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { withRouter } from "react-router";
 import styled from "styled-components";
 
-import Form from "../components/common/Form";
-import Label from "../components/common/Label";
-import Input from "../components/common/Input";
-import InputBirthday from "../components/common/InputBirthday";
-import Button from "../components/common/Button";
-import Text from "../components/common/Text";
+// component
+import Form from "../components/Form/Form";
+import Label from "../components/Form/Label";
+import Input from "../components/Form/Input";
+import InputBirthday from "../components/Form/InputBirthday";
+import Button from "../components/Form/Button";
+import Text from "../components/Form/Text";
 
+// 사용자 정의 hook
 import useInput from "../hooks/useInput";
 
+// api
 // import { apiRegister } from "../api";
 
-import { validate } from "../filter/vaildate";
+// util
+import { validate } from "../util";
 
 const Container = styled.section`
   display: flex;

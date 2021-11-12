@@ -1,14 +1,15 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import useButton from "../../../hooks/useButton";
-
-import Avatar from "../Avatar";
-
+// component
 import CommentOption from "./CommentOption";
 import CommentReply from "./CommentReply";
-import MenuCopy from "../MenuCopy";
+import Avatar from "../common/Avatar";
+import Menu from "../common/Menu";
+
+// 사용자 정의 hook
+import useButton from "../../hooks/useButton";
 
 const Wrapper = styled.section`
   display: flex;
@@ -72,24 +73,39 @@ const CommentSingle = ({
   commentList,
   comment,
   contents,
-  onSubmitComment,
+  onAddCommentExcute,
   onChangeContents,
-  onRemoveComment,
-  resizeContents,
+  onRemoveCommentExcute,
+  resizeTextarea,
 }) => {
+  const menuRef = useRef();
   const [isShowRecomment, onClickToggleRecomment] = useButton(false);
-  const [isShowOptionMenu, onClickOptionMenu] = useButton(false);
+  const [isShowOptionMenu, onClickOptionMenu, setIsShowOptionMenu] = useButton(false);
   const commentAvarterStyle = useMemo(
     () => ({ width: "35px", height: "35px", marginRight: "10px" }),
     [],
   );
 
-  // 대댓글 개수 ( 출력할 댓글의 아이디를 참조하는 댓글의 개수 구하기 )
+  // 메뉴창 이외의 것을 클릭 시 메뉴창 닫히게 하는 코드
+  useEffect(() => {
+    // 메뉴 닫기 이벤트 핸들러
+    const onCloseMenu = e => {
+      if (isShowOptionMenu && !menuRef.current?.contains(e.current)) setIsShowOptionMenu(false);
+    };
+
+    // 메뉴 닫기 이벤트 등록
+    window.addEventListener("click", onCloseMenu);
+
+    // 메뉴 닫기 이벤트 등록 해제
+    return () => window.removeEventListener("click", onCloseMenu);
+  }, [isShowOptionMenu, menuRef.current]);
+
+  // 대댓글 개수 구하기
   const getRecommentNumber = useCallback(() => {
     return commentList.filter(vComment => vComment.CommentId === comment._id).length;
   }, [commentList]);
 
-  // 답글존재하면 답글보여주기
+  // 대댓글이 존재하면 대댓글 컴포넌트 호출
   const showRecomment = useCallback(() => {
     // 현 댓글의 대댓글들 찾기
     const recommentList = commentList.filter(vComment => vComment.CommentId === comment._id);
@@ -102,13 +118,21 @@ const CommentSingle = ({
         commentList={commentList}
         comment={vComment}
         contents={contents}
-        onSubmitComment={onSubmitComment}
+        onAddCommentExcute={onAddCommentExcute}
+        onRemoveCommentExcute={onRemoveCommentExcute}
         onChangeContents={onChangeContents}
-        onRemoveComment={onRemoveComment}
-        resizeContents={resizeContents}
+        resizeTextarea={resizeTextarea}
       />
     ));
-  }, [profileImagePath, commentList, onSubmitComment, onChangeContents, onRemoveComment]);
+  }, [
+    profileImagePath,
+    commentList,
+    contents,
+    onAddCommentExcute,
+    onRemoveCommentExcute,
+    onChangeContents,
+    resizeTextarea,
+  ]);
 
   return (
     <>
@@ -133,12 +157,12 @@ const CommentSingle = ({
             </section>
 
             {isShowOptionMenu && (
-              <MenuCopy>
+              <Menu menu ref={menuRef}>
                 <button type="button">수정</button>
-                <button type="button" onClick={() => onRemoveComment(comment._id)}>
+                <button type="button" onClick={() => onRemoveCommentExcute(comment._id)}>
                   삭제
                 </button>
-              </MenuCopy>
+              </Menu>
             )}
 
             {/* 댓글 수정 및 삭제를 위한 옵션버튼 */}
@@ -152,13 +176,13 @@ const CommentSingle = ({
             profileImagePath={profileImagePath}
             contents={contents}
             updatedAt={comment.updatedAt}
-            onSubmitComment={onSubmitComment}
+            onAddCommentExcute={onAddCommentExcute}
             onChangeContents={onChangeContents}
-            resizeContents={resizeContents}
+            resizeTextarea={resizeTextarea}
             CommentId={comment._id}
           />
 
-          {/* 답글더보기 버튼 */}
+          {/* 대댓글 더보기 버튼 */}
           {getRecommentNumber() > 0 && (
             <button
               type="button"
@@ -169,7 +193,7 @@ const CommentSingle = ({
             </button>
           )}
 
-          {/* 답글 존재하면 답글보여주기 */}
+          {/* 대댓글이 존재하면 대댓글 컴포넌트 보여주기 */}
           {isShowRecomment && showRecomment()}
         </Wrapper>
       )}
@@ -210,10 +234,10 @@ CommentSingle.propTypes = {
     }),
   }).isRequired,
   contents: PropTypes.string.isRequired,
-  onSubmitComment: PropTypes.func.isRequired,
+  onAddCommentExcute: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
-  onRemoveComment: PropTypes.func.isRequired,
-  resizeContents: PropTypes.func.isRequired,
+  onRemoveCommentExcute: PropTypes.func.isRequired,
+  resizeTextarea: PropTypes.func.isRequired,
 };
 
 export default CommentSingle;

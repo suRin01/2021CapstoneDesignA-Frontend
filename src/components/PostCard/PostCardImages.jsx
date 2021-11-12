@@ -8,19 +8,20 @@ const ImageContainerStyle = styled.li`
   grid-auto-rows: auto;
   grid-gap: 3px;
 
+  & > img {
+    width: 100%;
+  }
+
   & > img:nth-child(n + 5) {
     display: none;
   }
-`;
-const ImageStyle = styled.img`
-  width: 100%;
 `;
 
 const PostCardImages = ({ Image }) => {
   return (
     <ImageContainerStyle>
       {Image.map(image => (
-        <ImageStyle key={image._id} src={image.path} alt="임시" />
+        <img key={image._id} src={image.path} alt="임시" />
       ))}
     </ImageContainerStyle>
   );

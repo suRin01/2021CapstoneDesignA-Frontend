@@ -1,15 +1,17 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { withRouter } from "react-router-dom";
-import styled from "styled-components";
 import PropTypes from "prop-types";
-
-import { timeFormat } from "../../../filter/dateGenerator";
-
-import useButton from "../../../hooks/useButton";
+import styled from "styled-components";
 
 // components
-import Avatar from "../../common/Avatar";
-import MenuCopy from "../../common/MenuCopy";
+import Avatar from "../common/Avatar";
+import Menu from "../common/Menu";
+
+// 사용자 정의 hook
+import useButton from "../../hooks/useButton";
+
+// util
+import { timeFormat } from "../../util";
 
 const TitleStyle = styled.li`
   display: flex;
@@ -56,32 +58,22 @@ const OptionButtonIconStyle = styled.i`
 `;
 
 const PostCardTitle = ({ history, user, post, onRemovePost }) => {
-  const [isShowOptionMenu, onClickOptionMenu] = useButton(false);
+  const menuRef = useRef();
+  const [isOpenMenu, onClickMenu, setIsOpenMenu] = useButton(false);
   const [isMine] = useState(user?._id === post.User._id);
 
-  const showMenu = useCallback(() => {
-    if (isShowOptionMenu) {
-      if (isMine) {
-        return (
-          <MenuCopy>
-            <button type="button" onClick={() => history.push(`/write/${post._id}`)}>
-              수정
-            </button>
-            <button type="button" onClick={() => onRemovePost(post._id)}>
-              삭제
-            </button>
-          </MenuCopy>
-        );
-      } else {
-        return (
-          <MenuCopy>
-            <button type="button">게시글 숨기기</button>
-            <button type="button">게시글 신고하기</button>
-          </MenuCopy>
-        );
-      }
-    }
-  }, [isMine, isShowOptionMenu]);
+  // 메뉴창 이외에 다른 곳을 클릭하면 메뉴창 닫기
+  useEffect(() => {
+    const onCloseMenu = e => {
+      if (isOpenMenu && !menuRef.current?.contains(e.target)) setIsOpenMenu(false);
+    };
+
+    // 메뉴 닫기 이벤트 등록
+    window.addEventListener("click", onCloseMenu);
+
+    // 메뉴 닫기 이벤트 등록 해제
+    return () => window.removeEventListener("click", onCloseMenu);
+  }, [isOpenMenu, menuRef.current]);
 
   return (
     <TitleStyle>
@@ -97,9 +89,24 @@ const PostCardTitle = ({ history, user, post, onRemovePost }) => {
       </TitleLeftStyle>
 
       {/* 옵션버튼 ( 게시글 수정 및 삭제 ) */}
-      <OptionButtonStyle type="button" onClick={onClickOptionMenu}>
+      <OptionButtonStyle type="button" onClick={onClickMenu}>
         <OptionButtonIconStyle></OptionButtonIconStyle>
-        {showMenu()}
+        {isOpenMenu &&
+          (isMine ? (
+            <Menu menu ref={menuRef}>
+              <button type="button" onClick={() => history.push(`/write/${post._id}`)}>
+                수정
+              </button>
+              <button type="button" onClick={() => onRemovePost(post._id)}>
+                삭제
+              </button>
+            </Menu>
+          ) : (
+            <Menu menu ref={menuRef}>
+              <button type="button">게시글 숨기기</button>
+              <button type="button">게시글 신고하기</button>
+            </Menu>
+          ))}
       </OptionButtonStyle>
     </TitleStyle>
   );

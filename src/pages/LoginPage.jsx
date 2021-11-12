@@ -2,13 +2,16 @@ import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { withRouter } from "react-router";
 import styled from "styled-components";
 
-import Form from "../components/common/Form";
-import Label from "../components/common/Label";
-import Input from "../components/common/Input";
-import Button from "../components/common/Button";
+// component
+import Form from "../components/Form/Form";
+import Label from "../components/Form/Label";
+import Input from "../components/Form/Input";
+import Button from "../components/Form/Button";
 
+// 사용자 정의 hook
 import useInput from "../hooks/useInput";
 
+// api
 // import { apiLogin } from "../api";
 
 const Container = styled.section`
@@ -67,7 +70,7 @@ const LoginPage = ({ history }) => {
       //   alert(error.response.data);
       // }
 
-      // 임시대체
+      // >> 임시로 로그인한 데이터 localStorage에 넣고 사용함
       localStorage.setItem(
         "user",
         JSON.stringify({

@@ -2,8 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 
+// 사용자 정의 hook
 import useTextArea from "../hooks/useTextArea";
 
+// api
 // import { apiAppendPost, apiEditPost, apiFetchPost } from "../api";
 
 const Wrapper = styled.form`
@@ -57,6 +59,7 @@ const WritePostPage = ({ history, match }) => {
     }
   }, [PostId, content]);
 
+  // enter인지 shift + enter인지 확인
   const onEnterPress = useCallback(
     e => {
       if (e.keyCode === 13 && e.shiftKey === false) {

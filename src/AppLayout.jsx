@@ -3,7 +3,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 
 // component
-import NavigationBar from "./NavigationBar";
+import NavigationBar from "./components/NavigationBar/NavigationBar";
 
 const MainLayoutStyle = styled.main`
   display: flex;

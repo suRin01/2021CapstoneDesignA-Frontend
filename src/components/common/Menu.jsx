@@ -1,8 +1,36 @@
 import React from "react";
-import styled from "styled-components";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 
-const CreateMenu = styled.section`
+// 일반 메뉴
+const MenuWrapper = styled.section`
+  position: relative;
+
+  .menu {
+    position: absolute;
+    top: 50px;
+    left: 15px;
+    padding: 0.3rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    background: #ffffff;
+    transform: translateX(-50%);
+    z-index: 1;
+
+    button[type="button"] {
+      white-space: nowrap;
+      padding: 0.3rem 5rem;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+    }
+  }
+`;
+
+// 네비게이션 메뉴
+const CreateNavMenu = styled.section`
   position: fixed;
   top: 0;
   right: 0;
@@ -10,7 +38,7 @@ const CreateMenu = styled.section`
   bottom: 0;
   z-index: 1000;
 `;
-const Container = styled.ul`
+const NavMenuWrapper = styled.ul`
   position: absolute;
   top: 90px;
   right: 10px;
@@ -43,20 +71,47 @@ const Container = styled.ul`
   }
 `;
 
-const Menu = ({ children, onCloseMenu }) => {
-  return (
-    <CreateMenu onClick={onCloseMenu}>
-      <Container>
-        {/* onClick={e => e.stopPropagation()} */}
-        {children}
-      </Container>
-    </CreateMenu>
-  );
+const MenuComponent = {
+  Menu: React.forwardRef(function Menu({ children }, ref) {
+    return (
+      <MenuWrapper ref={ref}>
+        <aside className="menu">{children}</aside>
+      </MenuWrapper>
+    );
+  }),
+  NavMenu: function NavMenu({ children, onCloseMenu }) {
+    return (
+      <CreateNavMenu onClick={onCloseMenu}>
+        <NavMenuWrapper>{children}</NavMenuWrapper>
+      </CreateNavMenu>
+    );
+  },
 };
 
-Menu.propTypes = {
+const Menu = React.forwardRef((props, ref) => {
+  const { menu, navMenu } = props;
+
+  if (menu) {
+    return (
+      <MenuComponent.Menu {...props} ref={ref}>
+        {props.children}
+      </MenuComponent.Menu>
+    );
+  }
+
+  if (navMenu) {
+    return <MenuComponent.NavMenu {...props}>{props.children}</MenuComponent.NavMenu>;
+  }
+
+  return <h1>메뉴 잘못 지정했음</h1>;
+});
+
+MenuComponent.NavMenu.propTypes = {
   children: PropTypes.node.isRequired,
   onCloseMenu: PropTypes.func.isRequired,
+};
+MenuComponent.Menu.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default Menu;

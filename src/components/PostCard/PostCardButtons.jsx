@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-
-import useButton from "../../../hooks/useButton";
 
 const ButtonWrapper = styled.li`
   display: flex;
@@ -22,7 +20,14 @@ const ButtonWrapper = styled.li`
 `;
 
 const PostCardButtons = ({ UserId, PostId, onClickIsShowButton, onToggleLike, Like }) => {
-  const [isLike, onClickIsLike] = useButton(Like.some(like => like._id === UserId));
+  // 본인이 좋아요를 이미 눌렀는지 아닌지 판단해서 초기값으로 넘겨줌
+  const [isLike, setIsLike] = useState(Like.some(like => like._id === UserId));
+
+  const onClickIsLike = useCallback(() => {
+    if (!UserId) return;
+
+    setIsLike(prev => !prev);
+  }, [UserId]);
 
   return (
     <ButtonWrapper>
@@ -44,7 +49,7 @@ const PostCardButtons = ({ UserId, PostId, onClickIsShowButton, onToggleLike, Li
 };
 
 PostCardButtons.propTypes = {
-  UserId: PropTypes.number.isRequired,
+  UserId: PropTypes.oneOfType([PropTypes.number]),
   PostId: PropTypes.number.isRequired,
   onClickIsShowButton: PropTypes.func.isRequired,
   onToggleLike: PropTypes.func.isRequired,

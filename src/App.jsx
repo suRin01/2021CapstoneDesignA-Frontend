@@ -13,12 +13,13 @@ import FriendPage from "./pages/FriendPage";
 import ProfilePage from "./pages/ProfilePage";
 import WritePostPage from "./pages/WritePostPage";
 
-// common-components
-import AppLayout from "./components/common/AppLayout";
+// 해당 페이지의 기본 레이아웃
+import AppLayout from "./AppLayout";
 
 // HOC
 import authHOC from "./hoc/authHOC";
 
+// api
 // import { apiLoadToMe } from "./api";
 
 function App() {

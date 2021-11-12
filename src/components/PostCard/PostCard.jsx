@@ -2,9 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
-import useUser from "../../../hooks/useUser";
-import useButton from "../../../hooks/useButton";
-
 // components
 import PostCardTitle from "./PostCardTitle";
 import PostCardContent from "./PostCardContent";
@@ -12,6 +9,10 @@ import PostCardImages from "./PostCardImages";
 import PostCardFooter from "./PostCardFooter";
 import PostCardButtons from "./PostCardButtons";
 import Comment from "../Comment/Comment";
+
+// 사용자 정의 hooks
+import useUser from "../../hooks/useUser";
+import useButton from "../../hooks/useButton";
 
 const PostCardStyle = styled.ul`
   width: 100%;
@@ -22,32 +23,43 @@ const PostCardStyle = styled.ul`
   box-shadow: 0 0 10px gray;
 `;
 
-const PostCard = ({ post, onRemovePost, onAppendComment, onRemoveCommentTemp, onToggleLike }) => {
+const PostCard = ({ post, onRemovePost, onAddCommentHome, onRemoveCommentHome, onToggleLike }) => {
   const [user] = useUser();
   const [isShowComment, onClickIsShowButton] = useButton(false);
 
   return (
     <PostCardStyle>
+      {/* 게시글 최상단 ( 프로필이미지 ~ 옵션버튼 ) */}
       <PostCardTitle user={user} post={post} onRemovePost={onRemovePost}></PostCardTitle>
+
+      {/* 게시글 컨텐츠 */}
       <PostCardContent content={post.content}></PostCardContent>
+
+      {/* 게시글의 이미지 */}
       <PostCardImages Image={post.Image}></PostCardImages>
+
+      {/* 게시글 하단 ( 좋아요 개수, 댓글 개수 ) */}
       <PostCardFooter Like={post.Like} Comment={post.Comment}></PostCardFooter>
+
+      {/* 게시글 최하단 버튼들 ( 좋아요, 댓글, 공유 ) */}
       <hr />
       <PostCardButtons
-        UserId={user._id}
+        UserId={user?._id}
         PostId={post._id}
         onClickIsShowButton={onClickIsShowButton}
         onToggleLike={onToggleLike}
         Like={post.Like}
       ></PostCardButtons>
+
+      {/* 댓글 영역 */}
       {isShowComment && (
         <>
           <hr />
           <Comment
             user={user}
             PostId={post._id}
-            onAppendComment={onAppendComment}
-            onRemoveCommentTemp={onRemoveCommentTemp}
+            onAddCommentHome={onAddCommentHome}
+            onRemoveCommentHome={onRemoveCommentHome}
           />
         </>
       )}
@@ -85,8 +97,8 @@ PostCard.propTypes = {
     ).isRequired,
   }).isRequired,
   onRemovePost: PropTypes.func.isRequired,
-  onAppendComment: PropTypes.func.isRequired,
-  onRemoveCommentTemp: PropTypes.func.isRequired,
+  onAddCommentHome: PropTypes.func.isRequired,
+  onRemoveCommentHome: PropTypes.func.isRequired,
   onToggleLike: PropTypes.func.isRequired,
 };
 

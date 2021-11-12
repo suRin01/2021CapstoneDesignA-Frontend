@@ -2,7 +2,8 @@ import React, { useCallback, useMemo, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-import Avatar from "../Avatar";
+// component
+import Avatar from "../common/Avatar";
 
 const Wrapper = styled.form`
   display: flex;
@@ -33,34 +34,35 @@ const Wrapper = styled.form`
 const CommentForm = ({
   profileImagePath,
   contents,
-  onSubmitComment,
+  onAddCommentExcute,
   onChangeContents,
-  resizeContents,
+  resizeTextarea,
   CommentId,
 }) => {
   const textareaRef = useRef();
-  const avarterStyle = useMemo(() => ({
-    width: "35px",
-    height: "35px",
-    marginRight: "10px",
-  }));
+  const avarterStyle = useMemo(
+    () => ({
+      width: "35px",
+      height: "35px",
+      marginRight: "10px",
+    }),
+    [],
+  );
 
+  // enter인지 shift + enter인지 판단해서 댓글 추가
   const onEnterPress = useCallback(
     e => {
       if (e.keyCode === 13 && e.shiftKey === false) {
-        onSubmitComment(e, CommentId, textareaRef);
+        onAddCommentExcute(e, CommentId, textareaRef);
       }
     },
     [contents, CommentId, textareaRef],
   );
 
   return (
-    <Wrapper onSubmit={e => onSubmitComment(e, CommentId, textareaRef)}>
-      {profileImagePath ? (
-        <Avatar src={profileImagePath} alt="유저 프로필 이미지" style={avarterStyle} />
-      ) : (
-        <Avatar alt="유저 프로필 이미지" style={avarterStyle} />
-      )}
+    <Wrapper onSubmit={e => onAddCommentExcute(e, CommentId, textareaRef)}>
+      <Avatar src={profileImagePath} alt="유저 프로필 이미지" style={avarterStyle} />
+
       <textarea
         type="text"
         placeholder="댓글을 입력하세요"
@@ -69,9 +71,9 @@ const CommentForm = ({
         ref={textareaRef}
         onKeyDown={e => {
           onEnterPress(e);
-          resizeContents(textareaRef.current);
+          resizeTextarea(textareaRef.current);
         }}
-        onKeyUp={() => resizeContents(textareaRef.current)}
+        onKeyUp={() => resizeTextarea(textareaRef.current)}
       />
       <button type="submit" className="comments__btn">
         생성
@@ -81,11 +83,11 @@ const CommentForm = ({
 };
 
 CommentForm.propTypes = {
-  profileImagePath: PropTypes.string,
+  profileImagePath: PropTypes.oneOfType([PropTypes.string]),
   contents: PropTypes.string.isRequired,
-  onSubmitComment: PropTypes.func.isRequired,
+  onAddCommentExcute: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
-  resizeContents: PropTypes.func.isRequired,
+  resizeTextarea: PropTypes.func.isRequired,
   CommentId: PropTypes.number,
 };
 
