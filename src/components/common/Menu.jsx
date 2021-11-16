@@ -10,7 +10,7 @@ const MenuWrapper = styled.section`
     position: absolute;
     top: 50px;
     left: 15px;
-    padding: 0.3rem;
+    padding: 0.5rem;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     background: #ffffff;
@@ -18,8 +18,16 @@ const MenuWrapper = styled.section`
     z-index: 1;
 
     button[type="button"] {
+      display: flex;
+      align-items: center;
       white-space: nowrap;
-      padding: 0.3rem 5rem;
+      padding-right: 5rem;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: bold;
+      color: rgba(0, 0, 0, 0.5);
+      padding: 0.5rem 1rem;
+      margin-right: 3rem;
 
       &:hover {
         background: rgba(0, 0, 0, 0.1);

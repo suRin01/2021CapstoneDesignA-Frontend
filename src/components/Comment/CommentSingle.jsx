@@ -7,6 +7,7 @@ import CommentOption from "./CommentOption";
 import CommentReply from "./CommentReply";
 import Avatar from "../common/Avatar";
 import Menu from "../common/Menu";
+import Icon from "../common/Icon";
 
 // 사용자 정의 hook
 import useButton from "../../hooks/useButton";
@@ -85,6 +86,7 @@ const CommentSingle = ({
     () => ({ width: "35px", height: "35px", marginRight: "10px" }),
     [],
   );
+  const [mouseHoverRemove, onMouseHoverRemove] = useButton(true);
 
   // 메뉴창 이외의 것을 클릭 시 메뉴창 닫히게 하는 코드
   useEffect(() => {
@@ -159,8 +161,23 @@ const CommentSingle = ({
             {isShowOptionMenu && (
               <Menu menu ref={menuRef}>
                 <button type="button">수정</button>
-                <button type="button" onClick={() => onRemoveCommentExcute(comment._id)}>
-                  삭제
+                <button
+                  type="button"
+                  onClick={() => onRemoveCommentExcute(comment._id)}
+                  onMouseEnter={onMouseHoverRemove}
+                  onMouseLeave={onMouseHoverRemove}
+                >
+                  {mouseHoverRemove ? (
+                    <>
+                      <Icon shape="trash" />
+                      <span>삭제</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icon shape="fillTrash" />
+                      <span style={{ color: "blue" }}>삭제</span>
+                    </>
+                  )}
                 </button>
               </Menu>
             )}

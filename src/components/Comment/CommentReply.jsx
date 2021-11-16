@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
@@ -6,6 +6,7 @@ import styled from "styled-components";
 import CommentOption from "./CommentOption";
 import Avatar from "../common/Avatar";
 import Menu from "../common/Menu";
+import Icon from "../common/Icon";
 
 // 사용자 정의 hook
 import useButton from "../../hooks/useButton";
@@ -75,12 +76,28 @@ const CommentReply = ({
   onRemoveCommentExcute,
   resizeTextarea,
 }) => {
+  const menuRef = useRef();
   const [isShowRecomment, onClickToggleRecomment] = useButton(false);
-  const [isShowOptionMenu, onClickOptionMenu] = useButton(false);
+  const [isShowOptionMenu, onClickOptionMenu, setIsShowOptionMenu] = useButton(false);
   const commentAvarterStyle = useMemo(
     () => ({ width: "35px", height: "35px", marginRight: "10px" }),
     [],
   );
+  const [mouseHoverRemove, onMouseHoverRemove] = useButton(true);
+
+  // 메뉴창 이외의 것을 클릭 시 메뉴창 닫히게 하는 코드
+  useEffect(() => {
+    // 메뉴 닫기 이벤트 핸들러
+    const onCloseMenu = e => {
+      if (isShowOptionMenu && !menuRef.current?.contains(e.current)) setIsShowOptionMenu(false);
+    };
+
+    // 메뉴 닫기 이벤트 등록
+    window.addEventListener("click", onCloseMenu);
+
+    // 메뉴 닫기 이벤트 등록 해제
+    return () => window.removeEventListener("click", onCloseMenu);
+  }, [isShowOptionMenu, menuRef.current]);
 
   // 대댓글 개수 ( 출력할 댓글의 아이디를 참조하는 댓글의 개수 구하기 )
   const getRecommentNumber = useCallback(() => {
@@ -129,10 +146,25 @@ const CommentReply = ({
 
         {/* 대댓글 메뉴 */}
         {isShowOptionMenu && (
-          <Menu menu>
+          <Menu menu ref={menuRef}>
             <button type="button">수정</button>
-            <button type="button" onClick={() => onRemoveCommentExcute(comment._id)}>
-              삭제
+            <button
+              type="button"
+              onClick={() => onRemoveCommentExcute(comment._id)}
+              onMouseEnter={onMouseHoverRemove}
+              onMouseLeave={onMouseHoverRemove}
+            >
+              {mouseHoverRemove ? (
+                <>
+                  <Icon shape="trash" />
+                  <span>삭제</span>
+                </>
+              ) : (
+                <>
+                  <Icon shape="fillTrash" />
+                  <span style={{ color: "blue" }}>삭제</span>
+                </>
+              )}
             </button>
           </Menu>
         )}

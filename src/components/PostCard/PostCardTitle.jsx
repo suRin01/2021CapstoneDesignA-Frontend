@@ -6,6 +6,7 @@ import styled from "styled-components";
 // components
 import Avatar from "../common/Avatar";
 import Menu from "../common/Menu";
+import Icon from "../common/Icon";
 
 // 사용자 정의 hook
 import useButton from "../../hooks/useButton";
@@ -59,8 +60,10 @@ const OptionButtonIconStyle = styled.i`
 
 const PostCardTitle = ({ history, user, post, onRemovePost }) => {
   const menuRef = useRef();
-  const [isOpenMenu, onClickMenu, setIsOpenMenu] = useButton(false);
   const [isMine] = useState(user?._id === post.User._id);
+  const [isOpenMenu, onClickMenu, setIsOpenMenu] = useButton(false);
+  // const [mouseHoverEdit, onMouseHoverEdit] = useButton(true);
+  const [mouseHoverRemove, onMouseHoverRemove] = useButton(true);
 
   // 메뉴창 이외에 다른 곳을 클릭하면 메뉴창 닫기
   useEffect(() => {
@@ -97,8 +100,23 @@ const PostCardTitle = ({ history, user, post, onRemovePost }) => {
               <button type="button" onClick={() => history.push(`/write/${post._id}`)}>
                 수정
               </button>
-              <button type="button" onClick={() => onRemovePost(post._id)}>
-                삭제
+              <button
+                type="button"
+                onClick={() => onRemovePost(post._id)}
+                onMouseEnter={onMouseHoverRemove}
+                onMouseLeave={onMouseHoverRemove}
+              >
+                {mouseHoverRemove ? (
+                  <>
+                    <Icon shape="trash" />
+                    <span>삭제</span>
+                  </>
+                ) : (
+                  <>
+                    <Icon shape="fillTrash" />
+                    <span style={{ color: "blue" }}>삭제</span>
+                  </>
+                )}
               </button>
             </Menu>
           ) : (

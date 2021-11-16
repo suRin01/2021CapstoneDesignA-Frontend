@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 // components
 import PostCard from "../components/PostCard/PostCard";
+import Icon from "../components/common/Icon";
 
 // 사용자 정의 hook
 import useUser from "../hooks/useUser";
@@ -25,6 +26,9 @@ const WritePostWrapper = styled.section`
   box-shadow: 0 0 10px grey;
 
   button {
+    display: flex;
+    justify-content: center;
+    align-items: end;
     width: 100%;
     background: rgba(0, 0, 0, 0.075);
     border-radius: 5px;
@@ -229,7 +233,8 @@ const HomePage = ({ history }) => {
         {/* 게시글 생성 버튼 */}
         <WritePostWrapper>
           <button type="button" onClick={() => history.push("/write")}>
-            게시글 생성하기
+            <Icon shape="postWrite" />
+            <b>게시글 생성하기</b>
           </button>
         </WritePostWrapper>
 

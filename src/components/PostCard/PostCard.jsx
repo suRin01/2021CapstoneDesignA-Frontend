@@ -49,6 +49,7 @@ const PostCard = ({ post, onRemovePost, onAddCommentHome, onRemoveCommentHome, o
         onClickIsShowButton={onClickIsShowButton}
         onToggleLike={onToggleLike}
         Like={post.Like}
+        isShowComment={isShowComment}
       ></PostCardButtons>
 
       {/* 댓글 영역 */}
