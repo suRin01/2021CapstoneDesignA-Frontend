@@ -9,6 +9,7 @@ import Input from "../components/Form/Input";
 import InputBirthday from "../components/Form/InputBirthday";
 import Button from "../components/Form/Button";
 import Text from "../components/Form/Text";
+import Icon from "../components/common/Icon";
 
 // 사용자 정의 hook
 import useInput from "../hooks/useInput";
@@ -37,6 +38,45 @@ const Title = styled.h1`
     font-size: 1.8rem;
   }
 `;
+const GenderAndPrWrapper = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 550;
+  margin-bottom: 2rem;
+
+  & > div {
+    display: flex;
+    align-items: center;
+  }
+
+  & > div > input {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+`;
+const ProfileImageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  background: #f0f0f0;
+  border-radius: 100%;
+  cursor: pointer;
+  transition: all 0.5s;
+
+  & > img {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    border-radius: 100%;
+  }
+  &:hover {
+    background: #d4d4d4;
+  }
+`;
 
 const RegisterPage = ({ history }) => {
   // 실제 사용하는 값을 저장할 변수들
@@ -49,7 +89,12 @@ const RegisterPage = ({ history }) => {
   const [year, , setYear] = useInput("");
   const [month, , setMonth] = useInput("");
   const [day, , setDay] = useInput("");
-  // const [gender, onChangeGender] = useInput(true);
+  const [gender, onChangeGender] = useInput(null);
+  const [profileImage, setProfileImage] = useState(null);
+
+  // 프로필 이미지 Base64, ref
+  const [profileImageBase64, setProfileImageBase64] = useState(null);
+  const profileImageRef = useRef(null);
 
   // 값 유효성 체크를 위한 변수들
   const [isValidateId, setIsValidateId] = useState(false);
@@ -150,6 +195,41 @@ const RegisterPage = ({ history }) => {
   // 인라인 스타일
   const marginBottom = useMemo(() => ({ marginBottom: "1.5rem" }));
 
+  // 프로필 이미지 등록
+  const onProfileImage = useCallback(
+    e => {
+      // 프로필 이미지 등록 ( 저장용 )
+      setProfileImage(e.target.files[0]);
+
+      // preview용도
+      const reader = new FileReader();
+      reader.onload = () => setProfileImageBase64(reader.result);
+      reader.readAsDataURL(e.target.files[0]);
+    },
+    [setProfileImage, setProfileImageBase64],
+  );
+
+  // 프로필 이미지 클릭
+  const onClickProfileImage = useCallback(() => {
+    profileImageRef.current.click();
+  }, [profileImageRef.current]);
+
+  // 프로필 이미지 drop 처리
+  const onDropImage = useCallback(
+    e => {
+      e.preventDefault();
+      // 프로필 이미지 등록 ( 저장용 )
+      setProfileImage(e.dataTransfer.files[0]);
+
+      // preview용도
+      const reader = new FileReader();
+      reader.onload = () => setProfileImageBase64(reader.result);
+      reader.readAsDataURL(e.dataTransfer.files[0]);
+    },
+    [setProfileImage, setProfileImageBase64],
+  );
+
+  // 회원가입 데이터 전송
   const onRegister = useCallback(
     async e => {
       e.preventDefault();
@@ -163,19 +243,23 @@ const RegisterPage = ({ history }) => {
       if (!validateAndFocus(isValidateEmail, emailRef, "이메일을 제대로 입력해주세요")) return;
       if (!validateAndFocus(isValidatePhone, phoneRef, "휴대폰번호를 제대로 입력해주세요")) return;
       if (!validateAndFocus(isValidateBirthday, null, "생일을 제대로 입력해주세요")) return;
+      if (!gender) return alert("성별을 체크해주세요!");
 
-      console.log("id >> ", id);
-      console.log("password >> ", password);
-      console.log("passwordCheck >> ", passwordCheck);
-      console.log("email >> ", email);
-      console.log("name >> ", name);
-      console.log("phone >> ", phone);
-      console.log("year >> ", year);
-      console.log("month >> ", month);
-      console.log("day >> ", day);
+      const formData = new FormData();
+
+      formData.append("id", id);
+      formData.append("password", password);
+      formData.append("email", email);
+      formData.append("name", name);
+      formData.append("phone", phone);
+      formData.append("year", year);
+      formData.append("month", month);
+      formData.append("day", day);
+      formData.append("gender", gender);
+      formData.append("profileImage", profileImage);
 
       // try {
-      //   const data = await apiRegister();
+      //   const data = await apiRegister(formData);
       //   alert(`${data.name}님 회원가입에 성공하셨습니다. 로그인 페이지로 이동됩니다.`);
       //   history.push("/login");
       // } catch (error) {
@@ -192,6 +276,8 @@ const RegisterPage = ({ history }) => {
       year,
       month,
       day,
+      gender,
+      profileImage,
       isValidateId,
       isValidatePassword,
       isValidatePasswordCheck,
@@ -280,6 +366,33 @@ const RegisterPage = ({ history }) => {
           onChangeDay={onChangeDay}
         ></InputBirthday>
         <Text isValidate={isValidateBirthday}>형식에 맞게 숫자만 입력해주세요</Text>
+
+        <Label name="gender">성별</Label>
+        <GenderAndPrWrapper>
+          <div>
+            <span>남자</span>
+            <input type="radio" name="gender" value={1} onChange={onChangeGender} />
+          </div>
+          <div>
+            <span>여자</span>
+            <input type="radio" name="gender" value={0} onChange={onChangeGender} />
+          </div>
+        </GenderAndPrWrapper>
+
+        <Label name="gender">프로필 이미지</Label>
+        <input
+          type="file"
+          onChange={onProfileImage}
+          style={{ display: "none" }}
+          ref={profileImageRef}
+        />
+        <ProfileImageWrapper
+          onClick={onClickProfileImage}
+          onDragOver={e => e.preventDefault()}
+          onDrop={onDropImage}
+        >
+          {profileImageBase64 ? <img src={profileImageBase64} /> : <Icon shape="imageAppend" />}
+        </ProfileImageWrapper>
 
         <Button type="submit">회원가입</Button>
       </Form>

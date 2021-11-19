@@ -17,9 +17,13 @@ const myRequestInterceptor = authInstance.interceptors.request.use(
   },
 );
 
-export async function apiRegister(body) {
+export async function apiRegister(formData) {
   try {
-    const { data } = await authInstance.post("/register", body);
+    const { data } = await axios.post(`${process.env.REACT_APP_SERVER}/api/auth`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return data;
   } catch (error) {
     throw error;
