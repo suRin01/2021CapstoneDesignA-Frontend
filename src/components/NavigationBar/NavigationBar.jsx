@@ -26,7 +26,7 @@ const NavContainerStyle = styled.ul`
   position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
 
   /* 수정필요 */
   @media only screen and (max-width: 768px) {
