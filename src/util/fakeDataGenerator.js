@@ -27,6 +27,22 @@ export function fakeDataGenerator() {
         _id: 2,
         path: faker.image.image(),
       },
+      {
+        _id: 3,
+        path: faker.image.image(),
+      },
+      {
+        _id: 4,
+        path: faker.image.image(),
+      },
+      {
+        _id: 5,
+        path: faker.image.image(),
+      },
+      {
+        _id: 6,
+        path: faker.image.image(),
+      },
     ],
   };
 }
