@@ -67,8 +67,8 @@ const initPosts = [
     ],
   },
 ];
+
 const ProfilePage = ({ post, match, history }) => {
-  //const [isMine] = useState(user?._id === post.User._id);
   const [user] = useUser();
   const [posts, setPosts] = useState([...initPosts]);
   //
@@ -97,16 +97,102 @@ const ProfilePage = ({ post, match, history }) => {
     setPosts(prev => prev.filter(post => post._id !== PostId));
   }, []);
 
+  // 댓글 추가 ( 여기서는 보여지는 개수만 + 1 이고 내용은 추가 없음 )
+  const onAddCommentHome = useCallback((PostId, CommentId, RecommentId) => {
+    setPosts(prev => {
+      return prev.map(post => {
+        if (post._id === PostId) {
+          return {
+            ...post,
+            Comment: [...post.Comment, { _id: CommentId, CommentId: RecommentId }],
+          };
+        }
+        return post;
+      });
+    });
+  }, []);
+
+  // 댓글 삭제 ( 여기서는 보여지는 개수만 - 1 이고 내용은 추가 없음 )
+  // **댓글의 대댓글의 대댓글 이후부터는 삭제가 안되는데 그거는 추후에 처리함**
+  const onRemoveCommentHome = useCallback((PostId, CommentId) => {
+    setPosts(prev => {
+      return prev.map(post => {
+        if (post._id === PostId) {
+          return {
+            ...post,
+            Comment: post.Comment.filter(comment => {
+              if (comment._id === CommentId) {
+                return false;
+              }
+              if (comment.CommentId === CommentId) {
+                return false;
+              }
+              return true;
+            }),
+          };
+        }
+        return post;
+      });
+    });
+  }, []);
+
+  // 좋아요 버튼을 눌렀을 때 실행
+  const onToggleLike = useCallback(
+    PostId => {
+      if (!user) return alert("로그인 후에 접근해주세요!");
+
+      const targetPost = posts.filter(post => post._id === PostId);
+      const isLike = targetPost[0].Like.some(v => v._id === user._id);
+
+      // 이미 좋아요를 눌렀다면 좋아요 삭제
+      if (isLike) {
+        setPosts(prev =>
+          prev.map(post => {
+            if (post === targetPost[0]) {
+              return {
+                ...post,
+                Like: post.Like.filter(v => v._id !== user._id),
+              };
+            }
+            return post;
+          }),
+        );
+      }
+      // 좋아요를 누르지 않았다면 좋아요 추가
+      else {
+        setPosts(prev =>
+          prev.map(post => {
+            if (post === targetPost[0]) {
+              return {
+                ...post,
+                Like: [...post.Like, { _id: user._id, name: user.name }],
+              };
+            }
+            return post;
+          }),
+        );
+      }
+    },
+    [user, posts],
+  );
+
   if (!posts) return <h2>게시글 데이터를 불러오는 중입니다...</h2>;
 
   return (
     <>
       {/*<h1>ProfilePage - {match.params.UserId}</h1>*/}
       <ProfileStyle>
-        <Profile user={match.params.UserId} post={post} />
+        <Profile user={user} post={post} />
         {/*<PostStyle>게시글</PostStyle>*/}
         {posts.map(post => (
-          <PostCard key={post._id} post={post} onRemovePost={onRemovePost} />
+          <PostCard
+            key={post._id}
+            post={post}
+            onRemovePost={onRemovePost}
+            onAddCommentHome={onAddCommentHome}
+            onRemoveCommentHome={onRemoveCommentHome}
+            onToggleLike={onToggleLike}
+          />
         ))}
       </ProfileStyle>
     </>

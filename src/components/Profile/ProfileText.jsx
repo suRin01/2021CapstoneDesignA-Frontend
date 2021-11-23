@@ -27,11 +27,11 @@ const UserData2 = styled.div`
   margin-top: 5px;
 `;
 
-const ProfileText = ({ uID, postNum, friendNum, Introduction }) => {
+const ProfileText = ({ userData, postNum, friendNum, Introduction }) => {
   return (
     <>
       <TextStyle>
-        <UserID>{uID}</UserID>
+        <UserID>{userData.name}</UserID>
         <UserData>
           <li>게시물 {postNum}</li>
           <li>친구 {friendNum}</li>

@@ -2,8 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "styled-components";
 import { withRouter } from "react-router-dom";
 
+import InputBirthday from "../../components/Form/InputBirthday";
 // 사용자 정의 hook
 import useInput from "../../hooks/useInput";
+// 사용자 정의 hooks
+import useUser from "../../hooks/useUser";
 
 // api
 // import { apiRegister } from "../api";
@@ -50,22 +53,13 @@ const InputTextStyle = styled.input`
   border-radius: 3px;
   line-height: 2.5rem;
   font-size: 1.2rem;
-  padding-left: 0.5rem;
+  padding-left: 1rem;
   padding-right: 0.5rem;
+
+  height: 50px;
 
   &:focus {
     border: 2px solid #dadada;
-  }
-
-  input[type="file"] {
-    position: absolute;
-    width: 0;
-    height: 0;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
   }
 `;
 
@@ -76,15 +70,70 @@ const Btns = styled.div`
   gap: 20px;
 `;
 
-const UserData = ({ user, history }) => {
+const Birth = styled.div`
+  display: inline-block;
+  width: 100%;
+
+  height: 50px;
+  border: 1px solid #dadada;
+  border-radius: 3px;
+  vertical-align: middle;
+
+  & > input {
+    float: left;
+    width: 28%;
+    height: 46px;
+    border: 0;
+    text-align: center;
+    font-size: 1.2rem;
+
+    &::placeholder {
+      font-size: 1rem;
+    }
+  }
+
+  & > span {
+    &::after {
+      content: "/";
+      float: left;
+      width: 22px;
+      height: 100%;
+      font-size: 15px;
+      color: #dadada;
+      line-height: 42px;
+      text-align: center;
+    }
+  }
+  &:focus-within {
+    border: 2px solid #dadada;
+  }
+
+  @media only screen and (max-width: 768px) {
+    width: 400px;
+    height: 40px;
+
+    & > input {
+      height: 38px;
+      font-size: 1rem;
+
+      &::placeholder {
+        font-size: 0.8rem;
+      }
+    }
+  }
+`;
+
+const UserData = ({ history }) => {
+  const [user] = useUser();
+  console.log(user);
   // 실제 사용하는 값을 저장할 변수들
-  const [name, onChangeName] = useInput("");
-  const [id, , setId] = useInput(user);
+  const [name, onChangeName] = useInput(user.name);
+  const [id, , setId] = useInput(user?._id);
   const [email, , setEmail] = useInput("");
   const [phone, , setPhone] = useInput("");
-  const [year, , setYear] = useInput(2121);
-  const [month, , setMonth] = useInput(12);
-  const [day, , setDay] = useInput(12);
+  const [year, , setYear] = useInput("");
+  const [month, , setMonth] = useInput("");
+  const [day, , setDay] = useInput("");
   //const [gender, onChangeGender] = useInput(true);
 
   // 값 유효성 체크를 위한 변수들
@@ -209,9 +258,9 @@ const UserData = ({ user, history }) => {
   );
 
   //프로필 이미지 수정
-  const [fileUrl, setFileUrl] = useState(null);
+  const [fileUrl, setFileUrl] = useState(user.Image.path);
   const hiddenFileInput = React.useRef(null);
-
+  console.log(user.Image.path);
   function processImage(event) {
     const imageFile = event.target.files[0];
     const imageUrl = URL.createObjectURL(imageFile);
@@ -272,41 +321,36 @@ const UserData = ({ user, history }) => {
         />
 
         <LabelStyle>생일</LabelStyle>
-        {<InputTextStyle placeholder="YYYYMMDD" maxLength={8} />}
-        {/*<div>
-          <InputTextStyle
-            placeholder="yyyy"
-            maxLength={4}
+        <Birth>
+          <input
+            type="text"
             value={year}
-            onChangeYear={onChangeYear}
-            ref={brithRef}
+            placeholder="YYYY"
+            maxLength="4"
+            onChange={onChangeYear}
           />
-          <InputTextStyle
-            placeholder="mm"
-            maxLength={2}
+          <span />
+          <input
+            type="text"
             value={month}
-            onChangeMonth={onChangeMonth}
-            ref={brithRef}
+            placeholder="MM"
+            maxLength="2"
+            onChange={onChangeMonth}
           />
-          <InputTextStyle
-            placeholder="dd"
-            maxLength={2}
-            value={day}
-            onChangeDay={onChangeDay}
-            ref={brithRef}
-          />
-        </div>*/}
+          <span />
+          <input type="text" value={day} placeholder="DD" maxLength="2" onChange={onChangeDay} />
+        </Birth>
+
         <LabelStyle>성별</LabelStyle>
         <div>
-          <div>
-            <input type="radio" name="gander" value="T" checked />
-            <LabelStyle>남</LabelStyle>
-            <input type="radio" name="gander" value="F" />
-            <LabelStyle>여</LabelStyle>
-          </div>
+          <input type="radio" name="gander" value="T" />
+          <LabelStyle>남</LabelStyle>
+          <input type="radio" name="gander" value="F" />
+          <LabelStyle>여</LabelStyle>
         </div>
+        <div></div>
         <Btns>
-          <BtnStyle type="reset" onClick={() => history.push(`/profile/${user}`)}>
+          <BtnStyle type="reset" onClick={() => history.push(`/profile/${user?._id}`)}>
             취소
           </BtnStyle>
           <BtnStyle type="submit">완료</BtnStyle>

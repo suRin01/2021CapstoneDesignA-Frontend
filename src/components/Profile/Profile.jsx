@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { withRouter, Link } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -29,36 +29,30 @@ const BtnStyle = styled.button`
   }
 `;
 
-const Profile = ({ post, user, uID, history }) => {
+const Profile = ({ post, user, history }) => {
+  const isMine = true;
+
+  console.log(post);
   return (
     <>
       <ProfileStyle>
         <Avatar
-          src="https://search.pstatic.net/common?type=n&size=174x174&quality=95&direct=true&src=https%3A%2F%2Fmusicmeta-phinf.pstatic.net%2Falbum%2F003%2F192%2F3192546.jpg%3Ftype%3Dr204Fll%26v%3D20210529225516"
+          src={user.Image.path}
           alt="프로필이미지"
           width={130}
           height={130}
           marginRight={0}
+          style={{ border: "3px solid #80c2b3" }}
         />
-        <ProfileText uID={user} />
-        <BtnStyle onClick={() => history.push(`/modify/${user}`)}>편집</BtnStyle>
+        <ProfileText userData={user} />
+        {isMine ? (
+          <BtnStyle onClick={() => history.push(`/modify/${user?._id}`)}>편집</BtnStyle>
+        ) : (
+          <BtnStyle>추가</BtnStyle>
+        )}
       </ProfileStyle>
     </>
   );
-};
-
-Profile.propTypes = {
-  post: PropTypes.shape({
-    _id: PropTypes.number.isRequired,
-    content: PropTypes.string.isRequired,
-    updatedAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
-    User: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      Image: PropTypes.shape({
-        path: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
-  }).isRequired,
 };
 
 export default withRouter(Profile);

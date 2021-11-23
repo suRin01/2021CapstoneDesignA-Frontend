@@ -61,7 +61,7 @@ const PostCardTitle = ({ history, user, post, onRemovePost }) => {
   const menuRef = useRef();
   const [isOpenMenu, onClickMenu, setIsOpenMenu] = useButton(false);
   const [isMine] = useState(user?._id === post.User._id);
-
+  console.log(post);
   // 메뉴창 이외에 다른 곳을 클릭하면 메뉴창 닫기
   useEffect(() => {
     const onCloseMenu = e => {
