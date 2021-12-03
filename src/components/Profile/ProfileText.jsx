@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 const TextStyle = styled.div`
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 `;
 const UserID = styled.label`
   font-size: 1.7rem;
@@ -13,43 +14,45 @@ const UserID = styled.label`
 `;
 const UserData = styled.ul`
   font-size: 1.3rem;
-  font-weight: bold;
   width: 17vw;
   margin-bottom: 0.5rem;
   display: felx;
-  gap: 20px;
+  font-weight: bold;
+  gap: 4.5vw;
 `;
-const UserData2 = styled.div`
+const Introduction = styled.div`
   font-size: 1rem;
   border: none;
   resize: none;
-  width: 18vw;
   margin-top: 5px;
+  padding-right: 5px;
+  color: grey;
+  white-space: normal;
 `;
 
-const ProfileText = ({ userData, postNum, friendNum, Introduction }) => {
+const ProfileText = ({ userData, postNum, friendNum, introduction }) => {
   return (
     <>
       <TextStyle>
         <UserID>{userData.name}</UserID>
         <UserData>
-          <li>게시물 {postNum}</li>
-          <li>친구 {friendNum}</li>
+          <li>게시물 &nbsp; {postNum}</li>
+          <li>친구 &nbsp; {friendNum}</li>
         </UserData>
-        <UserData2>{Introduction}</UserData2>
+        <Introduction>{introduction}</Introduction>
       </TextStyle>
     </>
   );
 };
 
 ProfileText.defaultProps = {
-  uID: "testUser",
+  userID: "userID",
   postNum: 0,
   friendNum: 0,
-  Introduction: "소개글",
+  introduction: "",
 };
 ProfileText.propTypes = {
-  uID: PropTypes.string,
+  userID: PropTypes.string,
   postNum: PropTypes.number,
   friendNum: PropTypes.number,
   Introduction: PropTypes.string,
