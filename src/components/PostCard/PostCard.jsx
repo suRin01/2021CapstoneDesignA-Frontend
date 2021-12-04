@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
@@ -11,8 +11,10 @@ import PostCardButtons from "./PostCardButtons";
 import Comment from "../Comment/Comment";
 
 // 사용자 정의 hooks
-import useUser from "../../hooks/useUser";
 import useButton from "../../hooks/useButton";
+
+// context
+import UserContext from "context/user";
 
 const PostCardStyle = styled.ul`
   width: 100%;
@@ -24,7 +26,7 @@ const PostCardStyle = styled.ul`
 `;
 
 const PostCard = ({ post, onRemovePost, onAddCommentHome, onRemoveCommentHome, onToggleLike }) => {
-  const [user] = useUser();
+  const user = useContext(UserContext);
   const [isShowComment, onClickIsShowButton] = useButton(false);
 
   return (

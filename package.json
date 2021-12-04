@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "antd": "^4.16.13",
+    "axios": "^0.24.0",
     "faker": "^5.5.3",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
@@ -31,6 +32,7 @@
     ]
   },
   "devDependencies": {
+    "chokidar": "^3.5.2",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

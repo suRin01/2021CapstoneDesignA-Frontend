@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 
@@ -6,14 +6,11 @@ import styled from "styled-components";
 import PostCard from "../components/PostCard/PostCard";
 import Icon from "../components/common/Icon";
 
-// 사용자 정의 hook
-import useUser from "../hooks/useUser";
-
 // api
-// import { apiFetchPosts } from "../api";
+import { apiFetchPost, apiLike, apiUnlike } from "../api";
 
-// util >> 이거는 서버연동해서 게시글 생성되면 삭제
-import { fakeDataGenerator } from "../util";
+// context
+import UserContext from "context/user";
 
 const PostCardStyle = styled.section`
   width: 100%;
@@ -42,66 +39,18 @@ const WritePostWrapper = styled.section`
   }
 `;
 
-// >> 이것도 서버연동해서 게시글 생성되면 삭제
-const initPosts = [
-  {
-    // 게시글자체에 연관된 내용
-    _id: 1,
-    content: "대충 게시글 내용",
-    updatedAt: Date.now(),
-
-    // 게시글을 작성한 유저
-    User: {
-      _id: 1,
-      name: "testUser",
-      // 게시글 작성 유저의 프로필이미지
-      Image: {
-        path: "https://avatars.githubusercontent.com/u/63289318?v=4",
-      },
-    },
-
-    // 게시글에 좋아요 누른 사람 리스트 ( 최초에 개수만 세고, 마우스 hover시 name리스트 보여주기 )
-    Like: [
-      {
-        _id: 1,
-        name: "aa",
-      },
-      {
-        _id: 2,
-        name: "bb",
-      },
-    ],
-
-    // 게시글에 댓글단 사람 리스트 ( 여기 데이터는 개수를 세기위한 데이터라 식별자만 요청함... 나중에 댓글보기를 클릭할 경우 해당 게시글의 댓글을 10개씩 끊어서 가져오도록 설계하기 )
-    Comment: [],
-
-    Image: [
-      {
-        _id: 1,
-        path: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxOTA0MjFfMTcw%2FMDAxNTU1ODQzNTEzODAw.2Q5KNKYAuQI6c228AriUfj8KRGv8RjoWTjaGulQV164g._7NbQejnS6EMSIr87jDdlJ214kBwHKz3cXbi-mg1Vc4g.PNG.sejinsatam%2Fimage.png&type=sc960_832",
-      },
-    ],
-  },
-];
-
 const HomePage = ({ history }) => {
-  const [user] = useUser();
-  const [posts, setPosts] = useState([...initPosts]);
+  const user = useContext(UserContext);
+  const [posts, setPosts] = useState(null);
   const [isThrottling, setIsThrottling] = useState(false);
-
-  // 게시글 패치
-  const fetchPosts = useCallback(async () => {
-    // 게시글 가져오기 api 호출
-    // const lastId = posts[posts.length - 1]._id;
-    // const { posts } = await apiFetchPosts(lastId)
-
-    // 임시처리 >> 이후에 서버로 응답온 값을 넣어줌 >> ...posts
-    setPosts(prev => [...prev, fakeDataGenerator()]);
-  }, []);
+  const [hasMorePosts, setHasMorePosts] = useState(false);
 
   // 최초 게시글들의 데이터 불러오기
   useEffect(() => {
-    fetchPosts();
+    (async () => {
+      const { posts } = await apiFetchPost(0, 10);
+      setPosts(prev => [...prev, ...posts]);
+    })();
   }, []);
 
   // 무한 스크롤링처리 + 쓰로틀링
@@ -113,33 +62,21 @@ const HomePage = ({ history }) => {
       if (
         window.scrollY + document.documentElement.clientHeight >
           document.documentElement.scrollHeight - 500 &&
-        !isThrottling
+        !isThrottling &&
+        hasMorePosts
       ) {
         setIsThrottling(true);
-        // const lastId = posts[posts.length - 1]._id;
-        // const posts = await apiFetchPosts(lastId)
-        // setPosts(prev => [...prev, ...posts]);
-        console.log("스크롤");
-
-        // >> 지금은 임시로 setTimeout()사용해서 1초동안 재요청 보내지 않음
-        // >> 실제로 테스트를 해보지 않아서 제대로 동작할지는 미지수
-        setTimeout(() => {
-          setIsThrottling(false);
-        }, 1000);
+        const PostId = posts[posts.length - 1]._id;
+        const posts = await apiFetchPost(PostId, 10);
+        setPosts(prev => [...prev, ...posts]);
+        setHasMorePosts(posts.length === 10);
       }
     }
     // 스크롤이벤트 등록
     document.addEventListener("scroll", scrollToLoad);
     // 스크롤이벤트 등록해제
     return () => document.removeEventListener("scroll", scrollToLoad);
-  }, [isThrottling]);
-
-  /**
-   * 주석 추후에 삭제
-   * 게시글 추가는 필요 없는 이유
-   * 게시글 페이지 생성 페이지가 따로 있기 때문에 게시글 생성 페이지 -> 메인 페이지로 이동 시
-   * useEffect()가 실행함으로서 게시글이 새로 로드됨
-   */
+  }, [isThrottling, hasMorePosts]);
 
   // 게시글 삭제
   const onRemovePost = useCallback(PostId => {
@@ -187,7 +124,7 @@ const HomePage = ({ history }) => {
 
   // 좋아요 버튼을 눌렀을 때 실행
   const onToggleLike = useCallback(
-    PostId => {
+    async PostId => {
       if (!user) return alert("로그인 후에 접근해주세요!");
 
       const targetPost = posts.filter(post => post._id === PostId);
@@ -206,6 +143,7 @@ const HomePage = ({ history }) => {
             return post;
           }),
         );
+        await apiLike({ PostId });
       }
       // 좋아요를 누르지 않았다면 좋아요 추가
       else {
@@ -220,12 +158,19 @@ const HomePage = ({ history }) => {
             return post;
           }),
         );
+        await apiUnlike({ PostId });
       }
     },
     [user, posts],
   );
 
-  if (!posts) return <h2>게시글 데이터를 불러오는 중입니다...</h2>;
+  if (!posts)
+    return (
+      <h2>
+        생성된 게시글이 없거나, <br />
+        게시글 데이터를 불러오는 중입니다...
+      </h2>
+    );
 
   return (
     <>

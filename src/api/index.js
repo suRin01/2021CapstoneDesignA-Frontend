@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 export { apiRegister, apiLogin, apiLogout, apiLoadToMe } from "./auth";
 export {
-  apiFetchPosts,
   apiAppendPost,
   apiEditPost,
   apiFetchPost,
@@ -11,3 +10,7 @@ export {
   apiAppendComment,
   apiRemoveComment,
 } from "./comment";
+export {
+  apiLike,
+  apiUnlike
+} from "./like"

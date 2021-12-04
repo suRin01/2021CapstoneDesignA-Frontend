@@ -9,15 +9,15 @@ import CommentSingle from "./CommentSingle";
 import useTextArea from "../../hooks/useTextArea";
 
 // api
-// import { apiFetchComments, apiAppendComment, apiRemoveComment } from "../../../api";
+import { apiFetchComments, apiAppendComment, apiRemoveComment } from "../../api";
 
 const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
   const [comments, setComments] = useState([]);
   const [contents, onChangeContents, , resizeTextarea] = useTextArea("");
 
-  // 최초 댓글들 패치 >> 나중에 서버연결시 주석풀기
+  // 최초 댓글들 패치
   useEffect(async () => {
-    // setComments(await apiFetchComments(PostId));
+    setComments(await apiFetchComments(PostId));
   }, []);
 
   // 실제로 state에 댓글 추가
@@ -60,13 +60,17 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
       // 입력하지 않은 경우
       if (!contents.trim()) return alert("내용을 작성해주세요");
 
-      // >> Math.floor(new Date().getTime() / 1000)는 나중에 생성한 댓글의 아이디로 변경
       // 댓글 추가 요청 api
-      // const { CommentId } = await apiAppendComments({ UserId: user._id, PostId, contents, CommentId });
+      const { CommentId: createdCommentId } = await apiAppendComment({
+        UserId: user._id,
+        PostId,
+        contents,
+        CommentId,
+      });
       // 상위 컴포넌트에 댓글 개수만 추가
-      onAddCommentHome(PostId, Math.floor(new Date().getTime() / 1000), CommentId);
+      onAddCommentHome(PostId, createdCommentId, CommentId);
       // 사용하는 state에 댓글 추가
-      onAddComment(Math.floor(new Date().getTime() / 1000), contents, CommentId);
+      onAddComment(createdCommentId, contents, CommentId);
 
       // 댓글 내용 초기화
       textareaRef.current.value = "";
@@ -81,7 +85,7 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
   const onRemoveCommentExcute = useCallback(
     async CommentId => {
       // api요청
-      // apiRemoveComment(CommentId)
+      apiRemoveComment(CommentId);
 
       // 상위 컴포넌트에 댓글 개수만 제거
       onRemoveCommentHome(PostId, CommentId);

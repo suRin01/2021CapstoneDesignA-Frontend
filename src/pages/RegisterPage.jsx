@@ -15,7 +15,7 @@ import Icon from "../components/common/Icon";
 import useInput from "../hooks/useInput";
 
 // api
-// import { apiRegister } from "../api";
+import { apiRegister } from "../api";
 
 // util
 import { validate } from "../util";
@@ -258,13 +258,13 @@ const RegisterPage = ({ history }) => {
       formData.append("gender", gender);
       formData.append("profileImage", profileImage);
 
-      // try {
-      //   const data = await apiRegister(formData);
-      //   alert(`${data.name}님 회원가입에 성공하셨습니다. 로그인 페이지로 이동됩니다.`);
-      //   history.push("/login");
-      // } catch (error) {
-      //   alert(error.response.data);
-      // }
+      try {
+        const data = await apiRegister(formData);
+        alert(`${data.name}님 회원가입에 성공하셨습니다. 로그인 페이지로 이동됩니다.`);
+        history.push("/login");
+      } catch (error) {
+        alert(error.response.data);
+      }
     },
     [
       id,

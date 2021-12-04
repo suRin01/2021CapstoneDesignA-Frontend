@@ -7,7 +7,7 @@ import "../css/font.css";
 import useTextArea from "../hooks/useTextArea";
 
 // api
-// import { apiAppendPost, apiEditPost, apiFetchPost } from "../api";
+import { apiAppendPost, apiEditPost, apiFetchPost } from "../api";
 
 const Wrapper = styled.form`
   margin-top: 1rem;
@@ -97,7 +97,7 @@ const WritePostPage = ({ history, match }) => {
   // 게시글 수정이라면 해당 게시글 정보 가져와서 textarea에 넣기
   useEffect(async () => {
     if (PostId) {
-      // setContent(await apiFetchPost(PostId))
+      setContent(await apiFetchPost(PostId, 1));
       console.log("게시글 수정... 게시글 정보 가져오기 >> ", PostId);
     }
   }, [PostId]);
@@ -107,13 +107,13 @@ const WritePostPage = ({ history, match }) => {
 
     if (PostId) {
       if (confirm("게시글을 수정할까요?")) {
+        apiEditPost({ PostId, content });
         // 홈페이지 강제이동
         history.push("/");
       }
     } else {
       if (confirm("게시글을 생성할까요?")) {
-        // 게시글 수정 api호출
-        // apiEditPost({ PostId, content })
+        apiAppendPost({ content });
         console.log("게시글 생성");
         // 홈페이지 강제이동
         history.push("/");

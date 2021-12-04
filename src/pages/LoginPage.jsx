@@ -12,7 +12,7 @@ import Button from "../components/Form/Button";
 import useInput from "../hooks/useInput";
 
 // api
-// import { apiLogin } from "../api";
+import { apiLogin } from "../api";
 
 const Container = styled.section`
   display: flex;
@@ -61,28 +61,13 @@ const LoginPage = ({ history }) => {
         return alert("비밀번호를 입력해주세요");
       }
 
-      console.log("id >> ", id);
-      console.log("password >> ", password);
-      // try {
-      //   const data = await apiLogin();
-      //   history.push("/");
-      // } catch (error) {
-      //   alert(error.response.data);
-      // }
-
-      // >> 임시로 로그인한 데이터 localStorage에 넣고 사용함
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          _id: 1,
-          name: "테스트",
-          Image: {
-            path: "https://search.pstatic.net/common?type=n&size=174x174&quality=95&direct=true&src=https%3A%2F%2Fmusicmeta-phinf.pstatic.net%2Falbum%2F003%2F192%2F3192546.jpg%3Ftype%3Dr204Fll%26v%3D20210529225516",
-          },
-        }),
-      );
-
-      history.push("/");
+      try {
+        await apiLogin({ id, password });
+      } catch (error) {
+        alert(error.response.data);
+      } finally {
+        history.push("/");
+      }
     },
     [id, password],
   );

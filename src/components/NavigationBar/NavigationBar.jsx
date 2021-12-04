@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 
@@ -10,7 +10,9 @@ import HamburgerButton from "./HamburgerButton";
 
 // 사용자 정의 hook
 import useButton from "../../hooks/useButton";
-import useUser from "../../hooks/useUser";
+
+// context
+import UserContext from "context/user";
 
 // api
 // import { apiLogout } from "../../api";
@@ -61,7 +63,7 @@ const NavContainerStyle = styled.ul`
 `;
 
 const NavigationBar = ({ history }) => {
-  const [user, setUser] = useUser();
+  const user = useContext(UserContext);
   const [isShowLink, onChangeShowLink] = useButton(true);
   const [isShowMenu, onChangeShowMenu, setIsShowMenu] = useButton(false);
 
