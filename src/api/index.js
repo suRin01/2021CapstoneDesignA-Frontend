@@ -3,7 +3,7 @@ export { apiRegister, apiLogin, apiLogout, apiLoadToMe } from "./auth";
 export {
   apiAppendPost,
   apiEditPost,
-  apiFetchPost,
+  apiFetchPosts,
 } from "./post";
 export {
   apiFetchComments,

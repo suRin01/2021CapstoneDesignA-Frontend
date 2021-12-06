@@ -7,7 +7,7 @@ import PostCard from "../components/PostCard/PostCard";
 import Icon from "../components/common/Icon";
 
 // api
-import { apiFetchPost, apiLike, apiUnlike } from "../api";
+import { apiFetchPosts, apiLike, apiUnlike } from "../api";
 
 // context
 import UserContext from "context/user";
@@ -41,15 +41,16 @@ const WritePostWrapper = styled.section`
 
 const HomePage = ({ history }) => {
   const user = useContext(UserContext);
-  const [posts, setPosts] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [isThrottling, setIsThrottling] = useState(false);
-  const [hasMorePosts, setHasMorePosts] = useState(false);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
 
   // 최초 게시글들의 데이터 불러오기
   useEffect(() => {
     (async () => {
-      const { posts } = await apiFetchPost(0, 10);
-      setPosts(prev => [...prev, ...posts]);
+      const tempPosts = await apiFetchPosts(0);
+
+      setPosts(prev => [...prev, ...tempPosts]);
     })();
   }, []);
 
@@ -66,17 +67,17 @@ const HomePage = ({ history }) => {
         hasMorePosts
       ) {
         setIsThrottling(true);
-        const PostId = posts[posts.length - 1]._id;
-        const posts = await apiFetchPost(PostId, 10);
-        setPosts(prev => [...prev, ...posts]);
+        const tempPosts = await apiFetchPosts(posts.length);
+        setPosts(prev => [...prev, ...tempPosts]);
         setHasMorePosts(posts.length === 10);
       }
     }
+
     // 스크롤이벤트 등록
     document.addEventListener("scroll", scrollToLoad);
     // 스크롤이벤트 등록해제
     return () => document.removeEventListener("scroll", scrollToLoad);
-  }, [isThrottling, hasMorePosts]);
+  }, [isThrottling, hasMorePosts, posts]);
 
   // 게시글 삭제
   const onRemovePost = useCallback(PostId => {

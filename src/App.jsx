@@ -33,8 +33,8 @@ function App() {
 
   return (
     <BrowserRouter>
-      <AppLayout>
-        <UserContext.Provider value={user}>
+      <UserContext.Provider value={user}>
+        <AppLayout>
           <Switch>
             <Route path="/" component={authHOC(HomePage, null)} exact />
             <Route path="/register" component={authHOC(RegisterPage, false)} exact />
@@ -44,8 +44,8 @@ function App() {
             <Route path="/write" component={authHOC(WritePostPage, true)} exact />
             <Route path="/write/:PostId" component={authHOC(WritePostPage, true)} exact />
           </Switch>
-        </UserContext.Provider>
-      </AppLayout>
+        </AppLayout>
+      </UserContext.Provider>
     </BrowserRouter>
   );
 }

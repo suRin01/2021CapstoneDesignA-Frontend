@@ -29,11 +29,11 @@ const Wrapper = styled.section`
 const CommentOption = ({
   profileImagePath,
   contents,
-  updatedAt,
+  createdAt,
   onAddCommentExcute,
   onChangeContents,
   resizeTextarea,
-  CommentId,
+  parentId,
 }) => {
   const [isShowForm, setIsShowComments] = useState(false);
 
@@ -47,7 +47,7 @@ const CommentOption = ({
       <button type="button" onClick={onClickShowForm}>
         답글달기
       </button>
-      <span className="time">{timeFormat(updatedAt)}</span>
+      <span className="time">{timeFormat(createdAt)}</span>
       {isShowForm && (
         <CommentForm
           profileImagePath={profileImagePath}
@@ -55,7 +55,7 @@ const CommentOption = ({
           onAddCommentExcute={onAddCommentExcute}
           onChangeContents={onChangeContents}
           resizeTextarea={resizeTextarea}
-          CommentId={CommentId}
+          parentId={parentId}
         />
       )}
     </Wrapper>
@@ -65,11 +65,11 @@ const CommentOption = ({
 CommentOption.propTypes = {
   profileImagePath: PropTypes.string,
   contents: PropTypes.string.isRequired,
-  updatedAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
+  createdAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
   onAddCommentExcute: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
   resizeTextarea: PropTypes.func.isRequired,
-  CommentId: PropTypes.number,
+  parentId: PropTypes.number,
 };
 
 export default CommentOption;

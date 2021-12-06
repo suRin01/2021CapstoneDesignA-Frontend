@@ -20,17 +20,18 @@ const ImageContainerStyle = styled.li`
   }
 `;
 
-const PostCardImages = ({ Image }) => {
+const PostCardImages = ({ Images }) => {
   const getPreview = useCallback(index => {
-    if (index === 3) return { mask: <b>이미지 {Image.length - 4}개 더보기</b> };
+    if (index === 3) return { mask: <b>이미지 {Images.length - 4}개 더보기</b> };
 
     return { mask: "" };
   }, []);
 
+  // console.log(typeof Images);
   return (
     <ImageContainerStyle>
       <AntdImage.PreviewGroup>
-        {Image.map((image, index) => (
+        {Images.map((image, index) => (
           <AntdImage key={image._id} src={image.path} alt="임시" preview={getPreview(index)} />
         ))}
       </AntdImage.PreviewGroup>
@@ -39,7 +40,7 @@ const PostCardImages = ({ Image }) => {
 };
 
 PostCardImages.propTypes = {
-  Image: PropTypes.arrayOf(
+  Images: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.number.isRequired,
       path: PropTypes.string.isRequired,

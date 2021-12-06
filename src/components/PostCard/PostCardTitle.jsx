@@ -82,7 +82,16 @@ const PostCardTitle = ({ history, user, post, onRemovePost }) => {
     <TitleStyle>
       <TitleLeftStyle>
         {/* 유저의 프로필 이미지 */}
-        <Avatar src={post.User.Image.path} width={60} height={60} marginRight={10} />
+        <Avatar
+          src={
+            post.User.Image.path === ""
+              ? undefined
+              : `${process.env.REACT_APP_SERVER}/images/${post.User.Image.path}`
+          }
+          width={60}
+          height={60}
+          marginRight={10}
+        />
 
         {/* 작성자와 작성시간 */}
         <TitleCenterStyle>

@@ -16,10 +16,10 @@ const myRequestInterceptor = authInstance.interceptors.request.use(
     return Promise.reject(error);
   },
 );
-
+//TODO: USER.js쪽으로 빼서 새로 만들기
 export async function apiRegister(formData) {
   try {
-    const { data } = await axios.post(`${process.env.REACT_APP_SERVER}/api/auth`, formData, {
+    const { data } = await axios.post(`${process.env.REACT_APP_SERVER}/api/user`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -29,10 +29,20 @@ export async function apiRegister(formData) {
     throw error;
   }
 }
-
+export async function apiLoadToMe() {
+  try {
+    const { data } = await axios.get(`${process.env.REACT_APP_SERVER}/api/user/me`, {
+      withCredentials: true,
+    });
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+//TODO 끝
 export async function apiLogin(body) {
   try {
-    const { data } = await authInstance.post("/login", body);
+    const { data } = await authInstance.post("", body);
     return data;
   } catch (error) {
     throw error;
@@ -42,15 +52,6 @@ export async function apiLogin(body) {
 export async function apiLogout() {
   try {
     const { data } = await authInstance.delete("/logout");
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function apiLoadToMe() {
-  try {
-    const { data } = await authInstance.get("/me");
     return data;
   } catch (error) {
     throw error;

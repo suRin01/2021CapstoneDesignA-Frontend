@@ -2,14 +2,14 @@
 import axios from "axios";
 
 const postInstance = axios.create({
-  baseURL: `${process.env.REACT_APP_SERVER}/api/post`,
+  baseURL: `${process.env.REACT_APP_SERVER}/api/posts`,
   withCredentials: true,
   timeout: 1000,
 });
 
-export async function apiFetchPost(PostId, count) {
+export async function apiFetchPosts(offset) {
   try {
-    const { data } = await postInstance.get(`/${PostId}?count=${count}`);
+    const { data } = await postInstance.get(`?offset=${offset}`);
     return data;
   } catch (error) {
     throw error;

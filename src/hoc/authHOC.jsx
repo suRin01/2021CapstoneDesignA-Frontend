@@ -7,12 +7,12 @@
  * false : 로그인안한 사용자만 접근가능
  */
 
-import React from "react";
-import useUser from "../hooks/useUser";
+import UserContext from "context/user";
+import React, { useContext } from "react";
 
 const authHOC = (Component, option) => {
   return function ({ history: { push } }) {
-    const [user] = useUser();
+    const user = useContext(UserContext);
 
     // 누구나 접근가능
     if (option === null) return <Component />;
