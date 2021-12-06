@@ -104,13 +104,13 @@ const CommentSingle = ({
 
   // 대댓글 개수 구하기
   const getRecommentNumber = useCallback(() => {
-    return commentList.filter(vComment => vComment.CommentId === comment._id).length;
+    return commentList.filter(vComment => vComment.parentId === comment._id).length;
   }, [commentList]);
 
   // 대댓글이 존재하면 대댓글 컴포넌트 호출
   const showRecomment = useCallback(() => {
     // 현 댓글의 대댓글들 찾기
-    const recommentList = commentList.filter(vComment => vComment.CommentId === comment._id);
+    const recommentList = commentList.filter(vComment => vComment.parentId === comment._id);
 
     // 찾은 대댓글들 화면에 그리기
     return recommentList.map(vComment => (
@@ -139,12 +139,16 @@ const CommentSingle = ({
   return (
     <>
       {/* 대댓글이 아니라면 랜더링 */}
-      {!comment.CommentId && (
+      {!comment.parentId && (
         <Wrapper>
           {/* 유저의 프로필이미지 */}
           <section className="container">
             <Avatar
-              src={comment.User.Image.path}
+              src={
+                comment.User.Image.path === ""
+                  ? undefined
+                  : `${process.env.REACT_APP_SERVER}/images/${comment.User.Image.path}`
+              }
               alt="유저 프로필 이미지"
               style={commentAvarterStyle}
             />
@@ -155,7 +159,7 @@ const CommentSingle = ({
               <span className="comment__writer">{comment.User.name}</span>
 
               {/* 댓글 내용 */}
-              <pre>{comment.contents}</pre>
+              <pre>{comment.content}</pre>
             </section>
 
             {isShowOptionMenu && (
@@ -192,11 +196,11 @@ const CommentSingle = ({
           <CommentOption
             profileImagePath={profileImagePath}
             contents={contents}
-            updatedAt={comment.updatedAt}
+            createdAt={comment.createdAt}
             onAddCommentExcute={onAddCommentExcute}
             onChangeContents={onChangeContents}
             resizeTextarea={resizeTextarea}
-            CommentId={comment._id}
+            parentId={comment._id}
           />
 
           {/* 대댓글 더보기 버튼 */}
@@ -225,7 +229,7 @@ CommentSingle.propTypes = {
       _id: PropTypes.number.isRequired,
       contents: PropTypes.string.isRequired,
       createdAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]),
-      updatedAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]).isRequired,
+      createdAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]).isRequired,
       User: PropTypes.shape({
         _id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
@@ -233,21 +237,21 @@ CommentSingle.propTypes = {
           path: PropTypes.string.isRequired,
         }),
       }),
-      CommentId: PropTypes.number,
+      parentId: PropTypes.number,
     }),
   ).isRequired,
   comment: PropTypes.shape({
     _id: PropTypes.number.isRequired,
     contents: PropTypes.string.isRequired,
     createdAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]),
-    updatedAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]).isRequired,
+    createdAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]).isRequired,
     User: PropTypes.shape({
       _id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
       Image: PropTypes.shape({
         path: PropTypes.string.isRequired,
       }),
-      CommentId: PropTypes.number,
+      parentId: PropTypes.number,
     }),
   }).isRequired,
   contents: PropTypes.string.isRequired,

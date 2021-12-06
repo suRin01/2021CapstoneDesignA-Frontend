@@ -17,21 +17,22 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
 
   // 최초 댓글들 패치
   useEffect(async () => {
-    setComments(await apiFetchComments(PostId));
+    const rename = await apiFetchComments(PostId);
+    console.log("comment >> ", rename);
+    setComments(rename);
   }, []);
 
   // 실제로 state에 댓글 추가
   const onAddComment = useCallback(
-    (_id, contents, CommentId) => {
+    (_id, contents, parentId) => {
       setComments(prev => [
         ...prev,
         {
           _id,
           contents,
           createdAt: Date.now(),
-          updatedAt: Date.now(),
           User: user,
-          CommentId,
+          parentId,
         },
       ]);
     },
@@ -39,11 +40,11 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
   );
 
   // 실제 state에 댓글과 대댓글 삭제
-  const onRemoveComment = useCallback(CommentId => {
+  const onRemoveComment = useCallback(parentId => {
     setComments(prev =>
       prev.filter(comment => {
-        if (comment._id === CommentId) return false;
-        if (comment.CommentId === CommentId) return false;
+        if (comment._id === parentId) return false;
+        if (comment.parentId === parentId) return false;
         return true;
       }),
     );
@@ -51,7 +52,7 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
 
   // 댓글 추가(제출)
   const onAddCommentExcute = useCallback(
-    async (e, CommentId, textareaRef, onClickToggleRecomment) => {
+    async (e, parentId, textareaRef, onClickToggleRecomment) => {
       e.preventDefault();
 
       // 비로그인시
@@ -60,17 +61,22 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
       // 입력하지 않은 경우
       if (!contents.trim()) return alert("내용을 작성해주세요");
 
+      console.log({
+        postId: +PostId,
+        content: contents,
+        parentId: parentId ? +parentId : null,
+      });
+
       // 댓글 추가 요청 api
-      const { CommentId: createdCommentId } = await apiAppendComment({
-        UserId: user._id,
-        PostId,
-        contents,
-        CommentId,
+      const { parentId: createdParentId } = await apiAppendComment({
+        postId: +PostId,
+        content: contents,
+        parentId: parentId ? +parentId : null,
       });
       // 상위 컴포넌트에 댓글 개수만 추가
-      onAddCommentHome(PostId, createdCommentId, CommentId);
+      onAddCommentHome(PostId, createdParentId, parentId);
       // 사용하는 state에 댓글 추가
-      onAddComment(createdCommentId, contents, CommentId);
+      onAddComment(parentId, contents, parentId);
 
       // 댓글 내용 초기화
       textareaRef.current.value = "";
@@ -83,15 +89,15 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
 
   // 댓글 삭제
   const onRemoveCommentExcute = useCallback(
-    async CommentId => {
+    async parentId => {
       // api요청
-      apiRemoveComment(CommentId);
+      apiRemoveComment(parentId);
 
       // 상위 컴포넌트에 댓글 개수만 제거
-      onRemoveCommentHome(PostId, CommentId);
+      onRemoveCommentHome(PostId, parentId);
 
       // 사용하는 state에 댓글과 대댓글 제거
-      onRemoveComment(CommentId);
+      onRemoveComment(parentId);
     },
     [PostId, onRemoveCommentHome, onRemoveComment],
   );

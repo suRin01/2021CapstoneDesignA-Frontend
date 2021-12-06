@@ -54,13 +54,27 @@ const NavRight = ({ user, isShowMenu, onChangeShowMenu, onClickLogout, onCloseMe
             </NavLink>
           </li>
           <li className="user__menu" onClick={onChangeShowMenu}>
-            <Avartar src={user.Image.path} style={navAvarterStyle} />
+            <Avartar
+              src={
+                user.Image.path === ""
+                  ? undefined
+                  : `${process.env.REACT_APP_SERVER}/images/${user.Image.path}`
+              }
+              style={navAvarterStyle}
+            />
             <b>{user.name}</b>
           </li>
           {isShowMenu && (
             <Menu navMenu onCloseMenu={onCloseMenu}>
               <li>
-                <Avartar src={user.Image.path} style={menuAvarterStyle} />
+                <Avartar
+                  src={
+                    user.Image.path === ""
+                      ? undefined
+                      : `${process.env.REACT_APP_SERVER}/images/${user.Image.path}`
+                  }
+                  style={menuAvarterStyle}
+                />
                 <span>
                   <b>{user.name}</b>
                   <span>내 프로필 보기</span>

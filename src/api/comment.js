@@ -9,7 +9,7 @@ const commentInstance = axios.create({
 
 export async function apiFetchComments(PostId) {
   try {
-    const { data } = await commentInstance.get(`/comments/${PostId}`);
+    const { data } = await commentInstance.get(`/comments?postId=${PostId}`);
     return data;
   } catch (error) {
     throw error;
@@ -18,7 +18,7 @@ export async function apiFetchComments(PostId) {
 
 export async function apiAppendComment(body) {
   try {
-    const { data } = await commentInstance.post("/comment", body);
+    const { data } = await commentInstance.post("/comments", body);
     return data;
   } catch (error) {
     throw error;

@@ -34,26 +34,26 @@ const Title = styled.h1`
 `;
 
 const LoginPage = ({ history }) => {
-  const [id, onChangeId] = useInput("");
+  const [username, onChangeUsername] = useInput("");
   const [password, onChangePassword] = useInput("");
 
   // 인라인 스타일
   const marginBottom = useMemo(() => ({ marginBottom: "1.5rem" }));
 
-  const idRef = useRef(null);
+  const usernameRef = useRef(null);
   const passwordRef = useRef(null);
 
   // 페이지 입장시 최초 포커스
   useEffect(() => {
-    idRef.current?.focus();
-  }, [idRef.current]);
+    usernameRef.current?.focus();
+  }, [usernameRef.current]);
 
   const onLogin = useCallback(
     async e => {
       e.preventDefault();
 
-      if (!(id && id.trim())) {
-        idRef?.current?.focus();
+      if (!(username && username.trim())) {
+        usernameRef?.current?.focus();
         return alert("아이디를 입력해주세요");
       }
       if (!(password && password.trim())) {
@@ -62,14 +62,15 @@ const LoginPage = ({ history }) => {
       }
 
       try {
-        await apiLogin({ id, password });
+        await apiLogin({ username, password });
       } catch (error) {
+        console.log(error);
         alert(error.response.data);
       } finally {
         history.push("/");
       }
     },
-    [id, password],
+    [username, password],
   );
 
   return (
@@ -79,11 +80,11 @@ const LoginPage = ({ history }) => {
         <Label>아이디</Label>
         <Input
           type="text"
-          value={id}
-          onChange={onChangeId}
+          value={username}
+          onChange={onChangeUsername}
           placeholder="아이디를 입력해주세요"
           style={marginBottom}
-          ref={idRef}
+          ref={usernameRef}
         />
 
         <Label>비밀번호</Label>

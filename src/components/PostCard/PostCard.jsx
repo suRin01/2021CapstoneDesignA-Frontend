@@ -29,6 +29,8 @@ const PostCard = ({ post, onRemovePost, onAddCommentHome, onRemoveCommentHome, o
   const user = useContext(UserContext);
   const [isShowComment, onClickIsShowButton] = useButton(false);
 
+  console.log("post >> ", post);
+
   return (
     <PostCardStyle>
       {/* 게시글 최상단 ( 프로필이미지 ~ 옵션버튼 ) */}
@@ -38,7 +40,7 @@ const PostCard = ({ post, onRemovePost, onAddCommentHome, onRemoveCommentHome, o
       <PostCardContent content={post.content}></PostCardContent>
 
       {/* 게시글의 이미지 */}
-      <PostCardImages Image={post.Image}></PostCardImages>
+      <PostCardImages Images={post.Images}></PostCardImages>
 
       {/* 게시글 하단 ( 좋아요 개수, 댓글 개수 ) */}
       <PostCardFooter Like={post.Like} Comment={post.Comment}></PostCardFooter>

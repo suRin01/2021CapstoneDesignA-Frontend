@@ -15,7 +15,7 @@ import useButton from "../../hooks/useButton";
 import UserContext from "context/user";
 
 // api
-// import { apiLogout } from "../../api";
+import { apiLogout } from "../../api";
 
 const NavStyle = styled.nav`
   position: sticky;
@@ -67,19 +67,14 @@ const NavigationBar = ({ history }) => {
   const [isShowLink, onChangeShowLink] = useButton(true);
   const [isShowMenu, onChangeShowMenu, setIsShowMenu] = useButton(false);
 
-  const onClickLogout = useCallback(() => {
-    // 임시로... 강제 리렌더링을 하기 위해서
-    // 지금 임시로 localStorage를 사용하고 있어서 React에서 변경감지를 못함
-    localStorage.removeItem("user");
-    setUser(JSON.parse(localStorage.getItem("user")));
-
+  const onClickLogout = useCallback(async () => {
     // + api로그아웃 요청
-    // try {
-    //   const data = await apiLogout();
-    //   history.push("/");
-    // } catch (error) {
-    //   alert(error.response.data);
-    // }
+    try {
+      const data = await apiLogout();
+      history.push("/");
+    } catch (error) {
+      alert(error.response.data);
+    }
   }, []);
 
   const onCloseMenu = useCallback(() => {

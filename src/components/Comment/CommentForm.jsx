@@ -37,7 +37,7 @@ const CommentForm = ({
   onAddCommentExcute,
   onChangeContents,
   resizeTextarea,
-  CommentId,
+  parentId,
 }) => {
   const textareaRef = useRef();
   const avarterStyle = useMemo(
@@ -53,15 +53,23 @@ const CommentForm = ({
   const onEnterPress = useCallback(
     e => {
       if (e.keyCode === 13 && e.shiftKey === false) {
-        onAddCommentExcute(e, CommentId, textareaRef);
+        onAddCommentExcute(e, parentId, textareaRef);
       }
     },
-    [contents, CommentId, textareaRef],
+    [parentId, textareaRef],
   );
 
   return (
-    <Wrapper onSubmit={e => onAddCommentExcute(e, CommentId, textareaRef)}>
-      <Avatar src={profileImagePath} alt="유저 프로필 이미지" style={avarterStyle} />
+    <Wrapper onSubmit={e => onAddCommentExcute(e, parentId, textareaRef)}>
+      <Avatar
+        src={
+          profileImagePath === ""
+            ? undefined
+            : `${process.env.REACT_APP_SERVER}/images/${profileImagePath}`
+        }
+        alt="유저 프로필 이미지"
+        style={avarterStyle}
+      />
 
       <textarea
         type="text"
@@ -88,7 +96,7 @@ CommentForm.propTypes = {
   onAddCommentExcute: PropTypes.func.isRequired,
   onChangeContents: PropTypes.func.isRequired,
   resizeTextarea: PropTypes.func.isRequired,
-  CommentId: PropTypes.number,
+  parentId: PropTypes.number,
 };
 
 export default CommentForm;

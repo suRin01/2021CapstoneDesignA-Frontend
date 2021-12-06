@@ -12,7 +12,7 @@ const PostCardFooter = ({ Like, Comment }) => {
   return (
     <FooterStyle>
       <span>좋아요 {Like.length}개</span>
-      <span>댓글 {Comment.length}개</span>
+      <span>댓글 {Comment}개</span>
     </FooterStyle>
   );
 };
