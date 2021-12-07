@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { withRouter } from "react-router-dom";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 // components
@@ -39,11 +39,13 @@ const WritePostWrapper = styled.section`
   }
 `;
 
-const HomePage = ({ history }) => {
-  const user = useContext(UserContext);
+const HomePage = () => {
+  const history = useHistory();
+  const { user } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
   const [isThrottling, setIsThrottling] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
+  const timerId = useRef(null);
 
   // 최초 게시글들의 데이터 불러오기
   useEffect(() => {
@@ -66,17 +68,26 @@ const HomePage = ({ history }) => {
         !isThrottling &&
         hasMorePosts
       ) {
-        setIsThrottling(true);
-        const tempPosts = await apiFetchPosts(posts.length);
-        setPosts(prev => [...prev, ...tempPosts]);
-        setHasMorePosts(posts.length === 10);
+        if (timerId.current) return;
+
+        timerId.current = setTimeout(async () => {
+          setIsThrottling(true);
+          const tempPosts = await apiFetchPosts(posts.length);
+          setPosts(prev => [...prev, ...tempPosts]);
+          setHasMorePosts(tempPosts.length === 10);
+          setIsThrottling(false);
+          timerId.current = null;
+        }, 0);
       }
     }
 
     // 스크롤이벤트 등록
     document.addEventListener("scroll", scrollToLoad);
     // 스크롤이벤트 등록해제
-    return () => document.removeEventListener("scroll", scrollToLoad);
+    return () => {
+      document.removeEventListener("scroll", scrollToLoad);
+      setIsThrottling(false);
+    };
   }, [isThrottling, hasMorePosts, posts]);
 
   // 게시글 삭제
@@ -85,13 +96,13 @@ const HomePage = ({ history }) => {
   }, []);
 
   // 댓글 추가 ( 여기서는 보여지는 개수만 + 1 이고 내용은 추가 없음 )
-  const onAddCommentHome = useCallback((PostId, CommentId, RecommentId) => {
+  const onAddCommentHome = useCallback(PostId => {
     setPosts(prev => {
       return prev.map(post => {
         if (post._id === PostId) {
           return {
             ...post,
-            Comment: [...post.Comment, { _id: CommentId, CommentId: RecommentId }],
+            Comment: post.Comment + 1,
           };
         }
         return post;
@@ -100,22 +111,13 @@ const HomePage = ({ history }) => {
   }, []);
 
   // 댓글 삭제 ( 여기서는 보여지는 개수만 - 1 이고 내용은 추가 없음 )
-  // **댓글의 대댓글의 대댓글 이후부터는 삭제가 안되는데 그거는 추후에 처리함**
-  const onRemoveCommentHome = useCallback((PostId, CommentId) => {
+  const onRemoveCommentHome = useCallback(PostId => {
     setPosts(prev => {
       return prev.map(post => {
         if (post._id === PostId) {
           return {
             ...post,
-            Comment: post.Comment.filter(comment => {
-              if (comment._id === CommentId) {
-                return false;
-              }
-              if (comment.CommentId === CommentId) {
-                return false;
-              }
-              return true;
-            }),
+            Comment: post.Comment - 1,
           };
         }
         return post;
@@ -200,4 +202,4 @@ const HomePage = ({ history }) => {
   );
 };
 
-export default withRouter(HomePage);
+export default HomePage;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
@@ -23,21 +23,13 @@ const Wrapper = styled.section`
       .option__button {
         border-radius: 100%;
         align-self: center;
+        width: 35px;
         height: 35px;
         transition: all 0.75s;
 
         &:hover {
           background-color: rgba(0, 0, 0, 0.1);
           transition: all 0s;
-        }
-        .option__icon {
-          display: inline-block;
-          background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yE/r/R3l5SniutOc.png");
-          background-position: -105px -107px;
-          background-size: auto;
-          width: 20px;
-          height: 20px;
-          background-repeat: no-repeat;
         }
       }
     }
@@ -70,14 +62,15 @@ const CommentReply = ({
   profileImagePath,
   commentList,
   comment,
-  contents,
+  content,
   onAddCommentExcute,
-  onChangeContents,
+  onChangeContent,
   onRemoveCommentExcute,
   resizeTextarea,
 }) => {
   const menuRef = useRef();
   const [isShowRecomment, onClickToggleRecomment] = useButton(false);
+  const [isShowMenuIcon, setIsShowMenuIcon] = useState(false);
   const [isShowOptionMenu, onClickOptionMenu, setIsShowOptionMenu] = useButton(false);
   const commentAvarterStyle = useMemo(
     () => ({ width: "35px", height: "35px", marginRight: "10px" }),
@@ -116,14 +109,14 @@ const CommentReply = ({
         profileImagePath={profileImagePath}
         commentList={commentList}
         comment={vComment}
-        contents={contents}
+        content={content}
         onAddCommentExcute={onAddCommentExcute}
-        onChangeContents={onChangeContents}
+        onChangeContent={onChangeContent}
         onRemoveCommentExcute={onRemoveCommentExcute}
         resizeTextarea={resizeTextarea}
       />
     ));
-  }, [profileImagePath, commentList, onAddCommentExcute, onChangeContents, onRemoveCommentExcute]);
+  }, [profileImagePath, commentList, onAddCommentExcute, onChangeContent, onRemoveCommentExcute]);
 
   return (
     <Wrapper>
@@ -174,18 +167,23 @@ const CommentReply = ({
         )}
 
         {/* 댓글 수정 및 삭제를 위한 옵션버튼 */}
-        <button className="option__button">
-          <i className="option__icon" onClick={onClickOptionMenu} />
+        <button
+          className="option__button"
+          onClick={onClickOptionMenu}
+          onMouseEnter={() => setIsShowMenuIcon(true)}
+          onMouseLeave={() => setIsShowMenuIcon(false)}
+        >
+          <Icon shape="menu" />
         </button>
       </section>
 
       {/* 댓글의 옵션버튼들 ( 좋아요, 싫어요, 답글달기 ) */}
       <CommentOption
         profileImagePath={profileImagePath}
-        contents={contents}
+        content={content}
         createdAt={comment.createdAt}
         onAddCommentExcute={onAddCommentExcute}
-        onChangeContents={onChangeContents}
+        onChangeContent={onChangeContent}
         resizeTextarea={resizeTextarea}
         parentId={comment._id}
       />
@@ -208,7 +206,7 @@ CommentReply.propTypes = {
   commentList: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.number.isRequired,
-      contents: PropTypes.string.isRequired,
+      content: PropTypes.string.isRequired,
       createdAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]),
       createdAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]).isRequired,
       User: PropTypes.shape({
@@ -223,7 +221,7 @@ CommentReply.propTypes = {
   ).isRequired,
   comment: PropTypes.shape({
     _id: PropTypes.number.isRequired,
-    contents: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
     createdAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]),
     createdAt: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]).isRequired,
     User: PropTypes.shape({
@@ -235,9 +233,9 @@ CommentReply.propTypes = {
       parentId: PropTypes.number,
     }),
   }).isRequired,
-  contents: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
   onAddCommentExcute: PropTypes.func.isRequired,
-  onChangeContents: PropTypes.func.isRequired,
+  onChangeContent: PropTypes.func.isRequired,
   onRemoveCommentExcute: PropTypes.func.isRequired,
   resizeTextarea: PropTypes.func.isRequired,
 };

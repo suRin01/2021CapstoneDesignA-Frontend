@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import styled from "styled-components";
@@ -48,15 +48,6 @@ const OptionButtonStyle = styled.button`
     background-color: rgba(0, 0, 0, 0.05);
   }
 `;
-const OptionButtonIconStyle = styled.i`
-  display: inline-block;
-  background-image: url("https://static.xx.fbcdn.net/rsrc.php/v3/yE/r/R3l5SniutOc.png");
-  background-position: -105px -107px;
-  background-size: auto;
-  width: 20px;
-  height: 20px;
-  background-repeat: no-repeat;
-`;
 
 const PostCardTitle = ({ history, user, post, onRemovePost }) => {
   const menuRef = useRef();
@@ -102,7 +93,7 @@ const PostCardTitle = ({ history, user, post, onRemovePost }) => {
 
       {/* 옵션버튼 ( 게시글 수정 및 삭제 ) */}
       <OptionButtonStyle type="button" onClick={onClickMenu}>
-        <OptionButtonIconStyle></OptionButtonIconStyle>
+        <Icon shape="menu" />
         {isOpenMenu &&
           (isMine ? (
             <Menu menu ref={menuRef}>
@@ -150,9 +141,9 @@ PostCardTitle.propTypes = {
     }),
   ]),
   post: PropTypes.shape({
-    _id: PropTypes.number.isRequired,
+    _id: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
-    updatedAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
+    updatedAt: PropTypes.string.isRequired,
     User: PropTypes.shape({
       name: PropTypes.string.isRequired,
       Image: PropTypes.shape({
@@ -165,11 +156,7 @@ PostCardTitle.propTypes = {
         name: PropTypes.string.isRequired,
       }).isRequired,
     ).isRequired,
-    Comment: PropTypes.arrayOf(
-      PropTypes.shape({
-        _id: PropTypes.number.isRequired,
-      }).isRequired,
-    ).isRequired,
+    Comment: PropTypes.number.isRequired,
     Image: PropTypes.arrayOf(
       PropTypes.shape({
         _id: PropTypes.number.isRequired,

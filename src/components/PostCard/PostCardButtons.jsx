@@ -89,7 +89,7 @@ const PostCardButtons = ({
 
 PostCardButtons.propTypes = {
   UserId: PropTypes.oneOfType([PropTypes.number]),
-  PostId: PropTypes.number.isRequired,
+  PostId: PropTypes.string.isRequired,
   onClickIsShowButton: PropTypes.func.isRequired,
   onToggleLike: PropTypes.func.isRequired,
   Like: PropTypes.arrayOf(

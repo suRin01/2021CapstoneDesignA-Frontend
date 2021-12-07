@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { withRouter, useHistory } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import "../css/font.css";
 
@@ -7,7 +7,7 @@ import "../css/font.css";
 import useTextArea from "../hooks/useTextArea";
 
 // api
-import { apiAppendPost, apiEditPost, apiFetchPosts } from "../api";
+import { apiAppendPost, apiEditPost, apiFetchPost } from "../api";
 
 const Wrapper = styled.form`
   margin-top: 1rem;
@@ -95,11 +95,13 @@ const WritePostPage = ({ history, match }) => {
   const [files, setFiles] = useState("");
 
   // 게시글 수정이라면 해당 게시글 정보 가져와서 textarea에 넣기
-  useEffect(async () => {
-    if (PostId) {
-      setContent(await apiFetchPosts(PostId, 1));
-      console.log("게시글 수정... 게시글 정보 가져오기 >> ", PostId);
-    }
+  useEffect(() => {
+    (async () => {
+      if (PostId) {
+        setContent(await apiFetchPost({ PostId }));
+        console.log("게시글 수정... 게시글 정보 가져오기 >> ", PostId);
+      }
+    })();
   }, [PostId]);
 
   const onSubmit = useCallback(() => {

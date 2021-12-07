@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { withRouter } from "react-router";
+import React, { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
 
 // component
@@ -12,7 +11,8 @@ import Button from "../components/Form/Button";
 import useInput from "../hooks/useInput";
 
 // api
-import { apiLogin } from "../api";
+import { apiLogin, apiLoadToMe } from "../api";
+import UserContext from "context/user";
 
 const Container = styled.section`
   display: flex;
@@ -33,7 +33,8 @@ const Title = styled.h1`
   }
 `;
 
-const LoginPage = ({ history }) => {
+const LoginPage = () => {
+  const { setUser } = useContext(UserContext);
   const [username, onChangeUsername] = useInput("");
   const [password, onChangePassword] = useInput("");
 
@@ -63,11 +64,10 @@ const LoginPage = ({ history }) => {
 
       try {
         await apiLogin({ username, password });
+        setUser(await apiLoadToMe());
       } catch (error) {
-        console.log(error);
+        console.error(error);
         alert(error.response.data);
-      } finally {
-        history.push("/");
       }
     },
     [username, password],
@@ -103,4 +103,4 @@ const LoginPage = ({ history }) => {
   );
 };
 
-export default withRouter(LoginPage);
+export default LoginPage;

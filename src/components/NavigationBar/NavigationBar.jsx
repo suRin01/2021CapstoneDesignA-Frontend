@@ -63,7 +63,7 @@ const NavContainerStyle = styled.ul`
 `;
 
 const NavigationBar = ({ history }) => {
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [isShowLink, onChangeShowLink] = useButton(true);
   const [isShowMenu, onChangeShowMenu, setIsShowMenu] = useButton(false);
 

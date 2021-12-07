@@ -26,10 +26,8 @@ const PostCardStyle = styled.ul`
 `;
 
 const PostCard = ({ post, onRemovePost, onAddCommentHome, onRemoveCommentHome, onToggleLike }) => {
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [isShowComment, onClickIsShowButton] = useButton(false);
-
-  console.log("post >> ", post);
 
   return (
     <PostCardStyle>
@@ -74,9 +72,9 @@ const PostCard = ({ post, onRemovePost, onAddCommentHome, onRemoveCommentHome, o
 
 PostCard.propTypes = {
   post: PropTypes.shape({
-    _id: PropTypes.number.isRequired,
+    _id: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
-    updatedAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
+    updatedAt: PropTypes.string.isRequired,
     User: PropTypes.shape({
       name: PropTypes.string.isRequired,
       Image: PropTypes.shape({
@@ -89,16 +87,12 @@ PostCard.propTypes = {
         name: PropTypes.string.isRequired,
       }).isRequired,
     ).isRequired,
-    Comment: PropTypes.arrayOf(
-      PropTypes.shape({
-        _id: PropTypes.number.isRequired,
-      }).isRequired,
-    ).isRequired,
+    Comment: PropTypes.number.isRequired,
     Image: PropTypes.arrayOf(
       PropTypes.shape({
         _id: PropTypes.number.isRequired,
         path: PropTypes.string.isRequired,
-      }).isRequired,
+      }),
     ).isRequired,
   }).isRequired,
   onRemovePost: PropTypes.func.isRequired,

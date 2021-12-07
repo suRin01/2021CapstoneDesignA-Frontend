@@ -6,43 +6,9 @@ const authInstance = axios.create({
   timeout: 1000,
 });
 
-const myRequestInterceptor = authInstance.interceptors.request.use(
-  config => {
-    // console.log("axios요청 보내기전 호출... 여기서 토큰전달할것같아서 일단 넣음");
-    return config;
-  },
-  error => {
-    console.log("오류 요청을 보내기전 호출됨");
-    return Promise.reject(error);
-  },
-);
-//TODO: USER.js쪽으로 빼서 새로 만들기
-export async function apiRegister(formData) {
-  try {
-    const { data } = await axios.post(`${process.env.REACT_APP_SERVER}/api/user`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-export async function apiLoadToMe() {
-  try {
-    const { data } = await axios.get(`${process.env.REACT_APP_SERVER}/api/user/me`, {
-      withCredentials: true,
-    });
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-//TODO 끝
 export async function apiLogin(body) {
   try {
-    const { data } = await authInstance.post("", body);
+    const { data } = await authInstance.post("/", body);
     return data;
   } catch (error) {
     throw error;

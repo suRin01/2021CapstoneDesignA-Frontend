@@ -22,6 +22,7 @@ const iconTable = {
   fillExport: "-29px -59px",
   postWrite: "-9px -79px",
   imageAppend: "-9px -99px",
+  menu: "-9px -119px",
 };
 
 const Icon = ({ shape }) => {

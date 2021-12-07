@@ -28,10 +28,10 @@ const Wrapper = styled.section`
 
 const CommentOption = ({
   profileImagePath,
-  contents,
+  content,
   createdAt,
   onAddCommentExcute,
-  onChangeContents,
+  onChangeContent,
   resizeTextarea,
   parentId,
 }) => {
@@ -51,9 +51,9 @@ const CommentOption = ({
       {isShowForm && (
         <CommentForm
           profileImagePath={profileImagePath}
-          contents={contents}
+          content={content}
           onAddCommentExcute={onAddCommentExcute}
-          onChangeContents={onChangeContents}
+          onChangeContent={onChangeContent}
           resizeTextarea={resizeTextarea}
           parentId={parentId}
         />
@@ -64,10 +64,10 @@ const CommentOption = ({
 
 CommentOption.propTypes = {
   profileImagePath: PropTypes.string,
-  contents: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
   createdAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.number]).isRequired,
   onAddCommentExcute: PropTypes.func.isRequired,
-  onChangeContents: PropTypes.func.isRequired,
+  onChangeContent: PropTypes.func.isRequired,
   resizeTextarea: PropTypes.func.isRequired,
   parentId: PropTypes.number,
 };

@@ -27,13 +27,15 @@ import UserContext from "context/user";
 function App() {
   const [user, setUser] = useState(null);
 
-  useEffect(async () => {
-    setUser(await apiLoadToMe());
+  useEffect(() => {
+    (async () => {
+      setUser(await apiLoadToMe());
+    })();
   }, []);
 
   return (
     <BrowserRouter>
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={{ user, setUser }}>
         <AppLayout>
           <Switch>
             <Route path="/" component={authHOC(HomePage, null)} exact />

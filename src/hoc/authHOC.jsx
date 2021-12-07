@@ -12,7 +12,7 @@ import React, { useContext } from "react";
 
 const authHOC = (Component, option) => {
   return function ({ history: { push } }) {
-    const user = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     // 누구나 접근가능
     if (option === null) return <Component />;

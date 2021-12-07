@@ -33,9 +33,8 @@ const Wrapper = styled.form`
 
 const CommentForm = ({
   profileImagePath,
-  contents,
   onAddCommentExcute,
-  onChangeContents,
+  onChangeContent,
   resizeTextarea,
   parentId,
 }) => {
@@ -75,7 +74,7 @@ const CommentForm = ({
         type="text"
         placeholder="댓글을 입력하세요"
         className="comments__textarea"
-        onChange={onChangeContents}
+        onChange={onChangeContent}
         ref={textareaRef}
         onKeyDown={e => {
           onEnterPress(e);
@@ -92,9 +91,8 @@ const CommentForm = ({
 
 CommentForm.propTypes = {
   profileImagePath: PropTypes.oneOfType([PropTypes.string]),
-  contents: PropTypes.string.isRequired,
   onAddCommentExcute: PropTypes.func.isRequired,
-  onChangeContents: PropTypes.func.isRequired,
+  onChangeContent: PropTypes.func.isRequired,
   resizeTextarea: PropTypes.func.isRequired,
   parentId: PropTypes.number,
 };

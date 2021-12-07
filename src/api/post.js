@@ -16,6 +16,15 @@ export async function apiFetchPosts(offset) {
   }
 }
 
+export async function apiFetchPost(body) {
+  try {
+    const { data } = await postInstance.get(`/${body.PostId}`);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function apiAppendPost(body) {
   try {
     const { data } = await postInstance.post("/", body);

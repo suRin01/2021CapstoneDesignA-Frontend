@@ -24,11 +24,7 @@ PostCardFooter.propTypes = {
       name: PropTypes.string.isRequired,
     }).isRequired,
   ).isRequired,
-  Comment: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.number.isRequired,
-    }).isRequired,
-  ).isRequired,
+  Comment: PropTypes.number.isRequired,
 };
 
 export default PostCardFooter;

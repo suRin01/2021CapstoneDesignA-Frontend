@@ -13,23 +13,23 @@ import { apiFetchComments, apiAppendComment, apiRemoveComment } from "../../api"
 
 const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
   const [comments, setComments] = useState([]);
-  const [contents, onChangeContents, , resizeTextarea] = useTextArea("");
+  const [content, onChangeContent, , resizeTextarea] = useTextArea("");
 
   // 최초 댓글들 패치
-  useEffect(async () => {
-    const rename = await apiFetchComments(PostId);
-    console.log("comment >> ", rename);
-    setComments(rename);
+  useEffect(() => {
+    (async () => {
+      setComments(await apiFetchComments(PostId));
+    })();
   }, []);
 
   // 실제로 state에 댓글 추가
   const onAddComment = useCallback(
-    (_id, contents, parentId) => {
+    (_id, content, parentId) => {
       setComments(prev => [
         ...prev,
         {
           _id,
-          contents,
+          content,
           createdAt: Date.now(),
           User: user,
           parentId,
@@ -59,24 +59,19 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
       if (!user) return alert("로그인후에 댓글을 작성해주세요");
 
       // 입력하지 않은 경우
-      if (!contents.trim()) return alert("내용을 작성해주세요");
-
-      console.log({
-        postId: +PostId,
-        content: contents,
-        parentId: parentId ? +parentId : null,
-      });
+      if (!content.trim()) return alert("내용을 작성해주세요");
 
       // 댓글 추가 요청 api
-      const { parentId: createdParentId } = await apiAppendComment({
+      const { comentId: createdComentId } = await apiAppendComment({
         postId: +PostId,
-        content: contents,
+        content,
         parentId: parentId ? +parentId : null,
       });
       // 상위 컴포넌트에 댓글 개수만 추가
-      onAddCommentHome(PostId, createdParentId, parentId);
+      onAddCommentHome(PostId);
       // 사용하는 state에 댓글 추가
-      onAddComment(parentId, contents, parentId);
+      // >> Date.now()를 createdComentId로 바꿔줘야함
+      onAddComment(Date.now(), content, parentId);
 
       // 댓글 내용 초기화
       textareaRef.current.value = "";
@@ -84,7 +79,7 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
       // 대댓글 입력했다면 창닫기
       // onClickToggleRecomment?.();
     },
-    [user, PostId, contents, onAddCommentHome, onAddComment],
+    [user, PostId, content, onAddCommentHome, onAddComment],
   );
 
   // 댓글 삭제
@@ -94,7 +89,7 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
       apiRemoveComment(parentId);
 
       // 상위 컴포넌트에 댓글 개수만 제거
-      onRemoveCommentHome(PostId, parentId);
+      onRemoveCommentHome(PostId);
 
       // 사용하는 state에 댓글과 대댓글 제거
       onRemoveComment(parentId);
@@ -106,9 +101,9 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
     <section className="comments__container">
       <CommentForm
         profileImagePath={user?.Image.path}
-        contents={contents}
+        content={content}
         onAddCommentExcute={onAddCommentExcute}
-        onChangeContents={onChangeContents}
+        onChangeContent={onChangeContent}
         resizeTextarea={resizeTextarea}
       />
       {comments &&
@@ -118,9 +113,9 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
             profileImagePath={user?.Image.path}
             commentList={comments}
             comment={comment}
-            contents={contents}
+            content={content}
             onAddCommentExcute={onAddCommentExcute}
-            onChangeContents={onChangeContents}
+            onChangeContent={onChangeContent}
             onRemoveCommentExcute={onRemoveCommentExcute}
             resizeTextarea={resizeTextarea}
           />
