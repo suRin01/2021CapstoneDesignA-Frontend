@@ -99,29 +99,40 @@ const WritePostPage = ({ history, match }) => {
     (async () => {
       if (PostId) {
         setContent(await apiFetchPost({ PostId }));
-        console.log("게시글 수정... 게시글 정보 가져오기 >> ", PostId);
       }
     })();
   }, [PostId]);
 
-  const onSubmit = useCallback(() => {
-    console.log("content >> ", content);
+  const onSubmit = useCallback(
+    e => {
+      e.preventDefault();
+      const formData = new FormData();
 
-    if (PostId) {
-      if (confirm("게시글을 수정할까요?")) {
-        apiEditPost({ PostId, content });
-        // 홈페이지 강제이동
-        history.push("/");
+      if (PostId) {
+        if (confirm("게시글을 수정할까요?")) {
+          formData.append("postId", PostId);
+          formData.append("content", content);
+          [...files].map(file => formData.append("images", file));
+
+          apiEditPost(formData);
+
+          // 홈페이지 강제이동
+          history.push("/");
+        }
+      } else {
+        if (confirm("게시글을 생성할까요?")) {
+          formData.append("content", content);
+          [...files].map(file => formData.append("images", file));
+
+          apiAppendPost(formData);
+
+          // 홈페이지 강제이동
+          history.push("/");
+        }
       }
-    } else {
-      if (confirm("게시글을 생성할까요?")) {
-        apiAppendPost({ content });
-        console.log("게시글 생성");
-        // 홈페이지 강제이동
-        history.push("/");
-      }
-    }
-  }, [PostId, content]);
+    },
+    [PostId, content, files],
+  );
 
   // enter인지 shift + enter인지 확인
   const onEnterPress = useCallback(

@@ -8,6 +8,7 @@ const ImageContainerStyle = styled.li`
   grid-template-columns: repeat(auto-fit, minmax(45%, auto));
   grid-auto-rows: auto;
   grid-gap: 3px;
+  background: rgba(0.5, 0.5, 0.5, gray);
 
   & > div {
     cursor: pointer;
@@ -32,7 +33,8 @@ const PostCardImages = ({ Images }) => {
     <ImageContainerStyle>
       <AntdImage.PreviewGroup>
         {Images.map((image, index) => (
-          <AntdImage key={image._id} src={image.path} alt="임시" preview={getPreview(index)} />
+          // eslint-disable-next-line
+          <AntdImage key={image} src={`${process.env.REACT_APP_SERVER}/images/${image}`} alt="임시" preview={getPreview(index)} />
         ))}
       </AntdImage.PreviewGroup>
     </ImageContainerStyle>
@@ -40,12 +42,7 @@ const PostCardImages = ({ Images }) => {
 };
 
 PostCardImages.propTypes = {
-  Images: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.number.isRequired,
-      path: PropTypes.string.isRequired,
-    }).isRequired,
-  ).isRequired,
+  Images: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 };
 
 export default PostCardImages;
