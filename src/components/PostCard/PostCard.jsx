@@ -88,12 +88,6 @@ PostCard.propTypes = {
       }).isRequired,
     ).isRequired,
     Comment: PropTypes.number.isRequired,
-    Image: PropTypes.arrayOf(
-      PropTypes.shape({
-        _id: PropTypes.number.isRequired,
-        path: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
   }).isRequired,
   onRemovePost: PropTypes.func.isRequired,
   onAddCommentHome: PropTypes.func.isRequired,

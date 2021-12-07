@@ -25,18 +25,26 @@ export async function apiFetchPost(body) {
   }
 }
 
-export async function apiAppendPost(body) {
+export async function apiAppendPost(formData) {
   try {
-    const { data } = await postInstance.post("/", body);
+    const { data } = await postInstance.post("/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return data;
   } catch (error) {
     throw error;
   }
 }
 
-export async function apiEditPost(body) {
+export async function apiEditPost(formData) {
   try {
-    const { data } = await postInstance.patch("/", body);
+    const { data } = await postInstance.patch("/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return data;
   } catch (error) {
     throw error;

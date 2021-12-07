@@ -23,21 +23,13 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
   }, []);
 
   // 실제로 state에 댓글 추가
-  const onAddComment = useCallback(
-    (_id, content, parentId) => {
-      setComments(prev => [
-        ...prev,
-        {
-          _id,
-          content,
-          createdAt: Date.now(),
-          User: user,
-          parentId,
-        },
-      ]);
-    },
-    [user],
-  );
+  const onAddComment = useCallback(() => {
+    (async () => {
+      setComments(await apiFetchComments(PostId));
+    })();
+
+    console.log("comment refetch");
+  }, []);
 
   // 실제 state에 댓글과 대댓글 삭제
   const onRemoveComment = useCallback(parentId => {
@@ -62,7 +54,7 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
       if (!content.trim()) return alert("내용을 작성해주세요");
 
       // 댓글 추가 요청 api
-      const { comentId: createdComentId } = await apiAppendComment({
+      await apiAppendComment({
         postId: +PostId,
         content,
         parentId: parentId ? +parentId : null,
@@ -71,7 +63,7 @@ const Comment = ({ user, PostId, onAddCommentHome, onRemoveCommentHome }) => {
       onAddCommentHome(PostId);
       // 사용하는 state에 댓글 추가
       // >> Date.now()를 createdComentId로 바꿔줘야함
-      onAddComment(Date.now(), content, parentId);
+      onAddComment();
 
       // 댓글 내용 초기화
       textareaRef.current.value = "";
