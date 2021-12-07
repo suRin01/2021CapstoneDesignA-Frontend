@@ -50,6 +50,8 @@ const OptionButtonStyle = styled.button`
 `;
 
 const PostCardTitle = ({ history, user, post, onRemovePost }) => {
+  console.log(user);
+  console.log(post);
   const menuRef = useRef();
   const [isMine] = useState(user?._id === post.User._id);
   const [isOpenMenu, onClickMenu, setIsOpenMenu] = useButton(false);
@@ -150,12 +152,6 @@ PostCardTitle.propTypes = {
         path: PropTypes.string.isRequired,
       }).isRequired,
     }).isRequired,
-    Like: PropTypes.arrayOf(
-      PropTypes.shape({
-        _id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-      }).isRequired,
-    ).isRequired,
     Comment: PropTypes.number.isRequired,
   }).isRequired,
   onRemovePost: PropTypes.func.isRequired,

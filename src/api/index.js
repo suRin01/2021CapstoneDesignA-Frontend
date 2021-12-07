@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 export { apiLogin, apiLogout } from "./auth";
 
-export { apiAppendPost, apiEditPost, apiFetchPosts, apiFetchPost } from "./post";
+export { apiAppendPost, apiEditPost, apiFetchPosts, apiFetchPost, apiDeletePost } from "./post";
 
 export { apiFetchComments, apiAppendComment, apiRemoveComment } from "./comment";
 

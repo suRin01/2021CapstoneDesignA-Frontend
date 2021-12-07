@@ -20,8 +20,7 @@ const PostCardFooter = ({ Like, Comment }) => {
 PostCardFooter.propTypes = {
   Like: PropTypes.arrayOf(
     PropTypes.shape({
-      _id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
+      user_id: PropTypes.number.isRequired,
     }).isRequired,
   ).isRequired,
   Comment: PropTypes.number.isRequired,

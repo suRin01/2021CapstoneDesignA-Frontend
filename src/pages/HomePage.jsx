@@ -7,7 +7,7 @@ import PostCard from "../components/PostCard/PostCard";
 import Icon from "../components/common/Icon";
 
 // api
-import { apiFetchPosts, apiLike, apiUnlike } from "../api";
+import { apiFetchPosts, apiLike, apiUnlike, apiDeletePost } from "../api";
 
 // context
 import UserContext from "context/user";
@@ -92,6 +92,10 @@ const HomePage = () => {
   // 게시글 삭제
   const onRemovePost = useCallback(PostId => {
     setPosts(prev => prev.filter(post => post._id !== PostId));
+
+    (async () => {
+      await apiDeletePost({ PostId });
+    })();
   }, []);
 
   // 댓글 추가 ( 여기서는 보여지는 개수만 + 1 이고 내용은 추가 없음 )
@@ -130,7 +134,7 @@ const HomePage = () => {
       if (!user) return alert("로그인 후에 접근해주세요!");
 
       const targetPost = posts.filter(post => post._id === PostId);
-      const isLike = targetPost[0].Like.some(v => v._id === user._id);
+      const isLike = targetPost[0].Like.some(v => v.user_id === user._id);
 
       // 이미 좋아요를 눌렀다면 좋아요 삭제
       if (isLike) {
@@ -139,13 +143,13 @@ const HomePage = () => {
             if (post === targetPost[0]) {
               return {
                 ...post,
-                Like: post.Like.filter(v => v._id !== user._id),
+                Like: post.Like.filter(v => v.user_id !== user._id),
               };
             }
             return post;
           }),
         );
-        await apiLike({ PostId });
+        await apiUnlike({ PostId });
       }
       // 좋아요를 누르지 않았다면 좋아요 추가
       else {
@@ -154,13 +158,13 @@ const HomePage = () => {
             if (post === targetPost[0]) {
               return {
                 ...post,
-                Like: [...post.Like, { _id: user._id, name: user.name }],
+                Like: [...post.Like, { user_id: user._id }],
               };
             }
             return post;
           }),
         );
-        await apiUnlike({ PostId });
+        await apiLike({ PostId });
       }
     },
     [user, posts],

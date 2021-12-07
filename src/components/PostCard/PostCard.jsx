@@ -81,12 +81,6 @@ PostCard.propTypes = {
         path: PropTypes.string.isRequired,
       }).isRequired,
     }).isRequired,
-    Like: PropTypes.arrayOf(
-      PropTypes.shape({
-        _id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-      }).isRequired,
-    ).isRequired,
     Comment: PropTypes.number.isRequired,
   }).isRequired,
   onRemovePost: PropTypes.func.isRequired,

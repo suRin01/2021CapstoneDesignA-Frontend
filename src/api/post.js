@@ -50,3 +50,12 @@ export async function apiEditPost(formData) {
     throw error;
   }
 }
+
+export async function apiDeletePost(body) {
+  try {
+    const { data } = await postInstance.delete(`/${body.PostId}`);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}

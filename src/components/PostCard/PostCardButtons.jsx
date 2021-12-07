@@ -37,7 +37,7 @@ const PostCardButtons = ({
   isShowComment,
 }) => {
   // 본인이 좋아요를 이미 눌렀는지 아닌지 판단해서 초기값으로 넘겨줌
-  const [isLike, setIsLike] = useState(Like.some(like => like._id === UserId));
+  const [isLike, setIsLike] = useState(Like.some(like => like.user_id === UserId));
 
   const onClickIsLike = useCallback(() => {
     if (!UserId) return;
@@ -94,8 +94,7 @@ PostCardButtons.propTypes = {
   onToggleLike: PropTypes.func.isRequired,
   Like: PropTypes.arrayOf(
     PropTypes.shape({
-      _id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
+      user_id: PropTypes.number.isRequired,
     }).isRequired,
   ).isRequired,
   isShowComment: PropTypes.bool.isRequired,

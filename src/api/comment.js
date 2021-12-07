@@ -27,7 +27,7 @@ export async function apiAppendComment(body) {
 
 export async function apiRemoveComment(CommentId) {
   try {
-    const { data } = await commentInstance.delete(`/comment/${CommentId}`);
+    const { data } = await commentInstance.delete(`/comments/${CommentId}`);
     return data;
   } catch (error) {
     throw error;
