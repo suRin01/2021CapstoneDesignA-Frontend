@@ -11,6 +11,7 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import FriendPage from "./pages/FriendPage";
 import ProfilePage from "./pages/ProfilePage";
+import ModifyPage from "./pages/ModifyPage";
 import WritePostPage from "./pages/WritePostPage";
 
 // 해당 페이지의 기본 레이아웃
@@ -43,6 +44,7 @@ function App() {
             <Route path="/login" component={authHOC(LoginPage, false)} exact />
             <Route path="/friend" component={authHOC(FriendPage, true)} exact />
             <Route path="/profile/:UserId" component={authHOC(ProfilePage, true)} exact />
+            <Route path="/modify/:UserId" component={authHOC(ModifyPage, true)} exact />
             <Route path="/write" component={authHOC(WritePostPage, true)} exact />
             <Route path="/write/:PostId" component={authHOC(WritePostPage, true)} exact />
           </Switch>
