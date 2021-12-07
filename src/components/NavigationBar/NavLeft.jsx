@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import logoImg from "logo.png";
+import logoImg from "./jbIcon.svg";
 
 const Container = styled.section`
   /* 임시 */
@@ -19,7 +19,7 @@ const NavLeft = () => {
     <Container>
       <li>
         <Link to="/">
-          <img src={logoImg} />
+          <img src={logoImg} alt="logoimg" />
         </Link>
       </li>
     </Container>
