@@ -51,7 +51,6 @@ const HomePage = () => {
   useEffect(() => {
     (async () => {
       const tempPosts = await apiFetchPosts(0);
-
       setPosts(prev => [...prev, ...tempPosts]);
     })();
   }, []);
